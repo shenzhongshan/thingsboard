@@ -217,7 +217,7 @@
     "domain-name": "Domeinnaam",
     "domain-name-unique": "Domeinnaam en protocol moeten uniek zijn.",
     "domain-name-max-length": "Domeinnaam moet minder dan 256 tekens bevatten",
-    "error-verification-url": "Domeinnaam mag geen '/' of ':' bevatten. Voorbeeld: thingsboard.io",
+    "error-verification-url": "Domeinnaam mag geen '/' of ':' bevatten. Voorbeeld: alsun.org",
     "connection-settings": "Verbindingsinstellingen",
     "oauth2": {
       "access-token-uri": "Access token URI",

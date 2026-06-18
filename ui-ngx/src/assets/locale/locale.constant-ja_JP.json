@@ -217,7 +217,7 @@
     "domain-name": "ドメイン名",
     "domain-name-unique": "ドメイン名とプロトコルは一意である必要があります。",
     "domain-name-max-length": "ドメイン名は256未満である必要があります",
-    "error-verification-url": "ドメイン名に記号'/'および':'を含めることはできません。例: thingsboard.io",
+    "error-verification-url": "ドメイン名に記号'/'および':'を含めることはできません。例: alsun.org",
     "connection-settings": "接続設定",
     "oauth2": {
       "access-token-uri": "アクセストークンURI",

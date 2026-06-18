@@ -68,7 +68,7 @@ public class DataValidatorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "aZ1_!#$%&'*+/=?`{|}~^.-@mail.io", "support@thingsboard.io",
+            "aZ1_!#$%&'*+/=?`{|}~^.-@mail.io", "support@alsun.org",
     })
     public void validateEmail(String email) {
         DataValidator.validateEmail(email);

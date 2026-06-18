@@ -2043,23 +2043,12 @@
         </dependencies>
     </dependencyManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>thingsboard-repo-deploy</id>
-            <name>ThingsBoard Repo Deployment</name>
-            <url>https://repo.thingsboard.io/artifactory/libs-release-public</url>
-        </repository>
-    </distributionManagement>
-
     <repositories>
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
-        <repository>
-            <id>thingsboard-public-repo</id>
-            <url>https://repo.thingsboard.io/artifactory/libs-release-public</url>
-        </repository>
+
         <repository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
@@ -2084,9 +2073,5 @@
     </repositories>
 
     <pluginRepositories>
-        <pluginRepository>
-            <id>thingsboard-repo</id>
-            <url>https://repo.thingsboard.io/artifactory/libs-release-public</url>
-        </pluginRepository>
     </pluginRepositories>
 </project>

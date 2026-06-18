@@ -57,7 +57,7 @@ INSERT INTO admin_settings ( id, created_time, tenant_id, key, json_value )
 VALUES ( '1e33c6f0-061e-11ef-b5b7-dba0ee077a1b', 1714391189727, '13814000-1dd2-11b2-8080-808080808080', 'jwt', '{
     "tokenExpirationTime": "9000",
     "refreshTokenExpTime": "604800",
-    "tokenIssuer": "thingsboard.io",
+    "tokenIssuer": "alsun.org",
     "tokenSigningKey": "QmlicmJkZk9tSzZPVFozcWY0Sm94UVhybmtBWXZ5YmZMOUZSZzZvcUFiOVhsb3VHUThhUWJGaXp3UHhtcGZ6Tw=="
 }' );
 

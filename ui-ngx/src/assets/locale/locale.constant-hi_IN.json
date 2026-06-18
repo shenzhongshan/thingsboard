@@ -217,7 +217,7 @@
     "domain-name": "डोमेन नाम",
     "domain-name-unique": "डोमेन नाम और प्रोटोकॉल अद्वितीय होने चाहिए।",
     "domain-name-max-length": "डोमेन नाम 256 अक्षरों से कम होना चाहिए",
-    "error-verification-url": "डोमेन नाम में '/' और ':' चिन्ह नहीं होने चाहिए। उदाहरण: thingsboard.io",
+    "error-verification-url": "डोमेन नाम में '/' और ':' चिन्ह नहीं होने चाहिए। उदाहरण: alsun.org",
     "connection-settings": "कनेक्शन सेटिंग्स",
     "oauth2": {
       "access-token-uri": "ऐक्सेस टोकन URI",

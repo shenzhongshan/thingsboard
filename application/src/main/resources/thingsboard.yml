@@ -165,7 +165,7 @@ security:
   jwt: # Since 3.4.2 values are persisted in the database during installation or upgrade. On Install, the key will be generated randomly if no custom value set. You can change it later from Web UI under SYS_ADMIN
     tokenExpirationTime: "${JWT_TOKEN_EXPIRATION_TIME:9000}" # Number of seconds (2.5 hours)
     refreshTokenExpTime: "${JWT_REFRESH_TOKEN_EXPIRATION_TIME:604800}" # Number of seconds (1 week).
-    tokenIssuer: "${JWT_TOKEN_ISSUER:thingsboard.io}" # User JWT Token issuer
+    tokenIssuer: "${JWT_TOKEN_ISSUER:alsun.org}" # User JWT Token issuer
     tokenSigningKey: "${JWT_TOKEN_SIGNING_KEY:thingsboardDefaultSigningKey}" # Base64 encoded
   # Enable/disable access to Tenant Administrators JWT token by System Administrator or Customer Users JWT token by Tenant Administrator
   user_token_access_enabled: "${SECURITY_USER_TOKEN_ACCESS_ENABLED:true}"
@@ -246,7 +246,7 @@ security:
       # Enable/disable Content-Security-Policy header. Mitigates XSS and data injection attacks
       enabled: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_ENABLED:false}"
       # Full CSP directive string. The default value is a working policy for most ThingsBoard deployments
-      value: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_VALUE:default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://img.thingsboard.io https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.arcgis.com; font-src 'self' data:; connect-src 'self' ws: wss: https://*.arcgis.com https://*.arcgisonline.com; worker-src 'self' blob:; frame-ancestors 'self'}"
+      value: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_VALUE:default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://img.alsun.org https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.arcgis.com; font-src 'self' data:; connect-src 'self' ws: wss: https://*.arcgis.com https://*.arcgisonline.com; worker-src 'self' blob:; frame-ancestors 'self'}"
       # If true, uses Content-Security-Policy-Report-Only header instead — the browser
       # reports violations but does not enforce them. Use for testing before enforcing.
       report-only: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_REPORT_ONLY:false}"
@@ -1619,7 +1619,7 @@ device:
 # Controls Edge instance gRPC communication, event storage, state persistence, and statistics reporting.
 edges:
   # Enable/disable Edge instance
-  enabled: "${EDGES_ENABLED:true}"
+  enabled: "${EDGES_ENABLED:false}"
   rpc:
     # RPC port bind
     port: "${EDGES_RPC_PORT:7070}"
@@ -1709,9 +1709,9 @@ swagger:
     # The contact name on the API doc UI page
     name: "${SWAGGER_CONTACT_NAME:ThingsBoard team}"
     # The contact URL on the API doc UI page
-    url: "${SWAGGER_CONTACT_URL:https://thingsboard.io}"
+    url: "${SWAGGER_CONTACT_URL:https://alsun.org}"
     # The contact email on the API doc UI page
-    email: "${SWAGGER_CONTACT_EMAIL:info@thingsboard.io}"
+    email: "${SWAGGER_CONTACT_EMAIL:info@alsun.org}"
   license:
     # The license title on the API doc UI page
     title: "${SWAGGER_LICENSE_TITLE:Apache License Version 2.0}"
@@ -2222,7 +2222,7 @@ management:
 # Specifies domain name and store links used for the ThingsBoard Live mobile application QR code and deep links.
 mobileApp:
   # Server domain name for Thingsboard Live mobile application
-  domain: "${TB_MOBILE_APP_DOMAIN:demo.thingsboard.io}"
+  domain: "${TB_MOBILE_APP_DOMAIN:demo.alsun.org}"
   # Link to Google Play store for Thingsboard Live mobile application
   googlePlayLink: "${TB_MOBILE_APP_GOOGLE_PLAY_LINK:https://play.google.com/store/apps/details?id=org.thingsboard.demo.app}"
   # Link to App Store for Thingsboard Live mobile application

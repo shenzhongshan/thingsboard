@@ -40,7 +40,7 @@ class TenantDataValidatorTest {
     void testValidateNameInvocation() {
         Tenant tenant = new Tenant();
         tenant.setTitle("Monster corporation ©");
-        tenant.setEmail("support@thingsboard.io");
+        tenant.setEmail("support@alsun.org");
 
         validator.validateDataImpl(tenantId, tenant);
         verify(validator).validateString("Tenant title", tenant.getTitle());

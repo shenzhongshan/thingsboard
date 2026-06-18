@@ -60,7 +60,7 @@ public class QrCodeSettingsController extends BaseController {
 
     @Value("${cache.specs.mobileSecretKey.timeToLiveInMinutes:2}")
     private int mobileSecretKeyTtl;
-    @Value("${mobileApp.domain:demo.thingsboard.io}")
+    @Value("${mobileApp.domain:demo.alsun.org}")
     private String defaultAppDomain;
 
     public static final String ASSET_LINKS_PATTERN = "[{\n" +

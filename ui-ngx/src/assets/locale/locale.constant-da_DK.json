@@ -217,7 +217,7 @@
     "domain-name": "Domænenavn",
     "domain-name-unique": "Domænenavn og protokol skal være unikke.",
     "domain-name-max-length": "Domænenavnet skal være mindre end 256",
-    "error-verification-url": "Et domænenavn må ikke indeholde symbolerne '/' og ':'. Eksempel: thingsboard.io",
+    "error-verification-url": "Et domænenavn må ikke indeholde symbolerne '/' og ':'. Eksempel: alsun.org",
     "connection-settings": "Forbindelsesindstillinger",
     "oauth2": {
       "access-token-uri": "Adgangstoken-URI",

@@ -457,7 +457,7 @@ These dependencies override the versions managed by Spring Boot's BOM, typically
 | Repository ID | URL | Purpose |
 |---|---|---|
 | `central` | `https://repo1.maven.org/maven2/` | Maven Central |
-| `thingsboard-public-repo` | `https://repo.thingsboard.io/artifactory/libs-release-public` | ThingsBoard artifacts and custom builds |
+| `thingsboard-public-repo` | `https://repo.alsun.org/artifactory/libs-release-public` | ThingsBoard artifacts and custom builds |
 | `spring-snapshots` | `https://repo.spring.io/snapshot` | Spring snapshot builds |
 | `spring-milestones` | `https://repo.spring.io/milestone` | Spring milestone builds |
 | `typesafe` | `https://repo.typesafe.com/typesafe/releases/` | Typesafe/Akka dependencies |

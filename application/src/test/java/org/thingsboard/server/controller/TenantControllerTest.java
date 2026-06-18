@@ -302,7 +302,7 @@ public class TenantControllerTest extends AbstractControllerTest {
         User tenantAdminUser = new User();
         tenantAdminUser.setAuthority(Authority.TENANT_ADMIN);
         tenantAdminUser.setTenantId(savedTenant.getId());
-        tenantAdminUser.setEmail("tenantToDelete@thingsboard.io");
+        tenantAdminUser.setEmail("tenantToDelete@alsun.org");
 
         createUserAndLogin(tenantAdminUser, TENANT_ADMIN_PASSWORD);
 

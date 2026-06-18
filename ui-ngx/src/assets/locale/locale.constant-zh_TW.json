@@ -165,7 +165,7 @@
         "domain-name": "網域名稱",
         "domain-name-unique": "網域名稱與通訊協定需是唯一值",
         "domain-name-max-length": "網域名稱需少於256字元",
-        "error-verification-url": "網域名稱不可包含符號 '/' 及 ':' 例如：thingsboard.io",
+        "error-verification-url": "網域名稱不可包含符號 '/' 及 ':' 例如：alsun.org",
         "oauth2": {
             "access-token-uri": "訪問token URI",
             "access-token-uri-required": "訪問token為必填",

@@ -217,7 +217,7 @@
     "domain-name": "Alan adı",
     "domain-name-unique": "Alan adı ve protokol benzersiz olmalıdır.",
     "domain-name-max-length": "Alan adı 256 karakterden kısa olmalıdır",
-    "error-verification-url": "Alan adı '/' ve ':' karakterlerini içermemelidir. Örnek: thingsboard.io",
+    "error-verification-url": "Alan adı '/' ve ':' karakterlerini içermemelidir. Örnek: alsun.org",
     "connection-settings": "Bağlantı ayarları",
     "oauth2": {
       "access-token-uri": "Erişim belirteci URI'si",
