@@ -752,6 +752,12 @@ const menuFilters = new Map<MenuId, MenuFilter>([
   ],
   [
     MenuId.rulechain_templates, (authState) => authState.edgesSupportEnabled
+  ],
+  [
+    MenuId.features, () => false
+  ],
+  [
+    MenuId.mobile_center, () => false
   ]
 ]);
 
