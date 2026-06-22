@@ -2070,8 +2070,16 @@
             <name>Typesafe Repository</name>
             <url>https://repo.typesafe.com/typesafe/releases/</url>
         </repository>
+        <repository>
+            <id>thingsboard-public-repo</id>
+            <url>https://repo.thingsboard.io/artifactory/libs-release-public</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
+        <pluginRepository>
+            <id>thingsboard-repo</id>
+            <url>https://repo.thingsboard.io/artifactory/libs-release-public</url>
+        </pluginRepository>
     </pluginRepositories>
 </project>
