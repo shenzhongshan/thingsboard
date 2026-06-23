@@ -107,7 +107,7 @@ $ ./docker-start-services.sh
 
 Where:
 
-- `FROM_VERSION` - from which version upgrade should be started. See [Upgrade Instructions](https://alsun.org/docs/user-guide/install/upgrade-instructions) for valid `fromVersion` values.
+- `FROM_VERSION` - from which version upgrade should be started. See [Upgrade Instructions](https://allshen.org/docs/user-guide/install/upgrade-instructions) for valid `fromVersion` values.
 
 
 ## Monitoring

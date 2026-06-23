@@ -44,7 +44,7 @@ OpenJDK 64-Bit Server VM (build ...)
 
 ThingsBoard Edge supports **SQL** and **hybrid** database configurations.
 In this guide, we'll use an **SQL** database.
-For more details about the hybrid setup, please refer to the official installation instructions on the <a href="https://alsun.org/docs/user-guide/install/edge/rhel/#step-2-configure-thingsboard-database" target="_blank">ThingsBoard documentation site</a>.
+For more details about the hybrid setup, please refer to the official installation instructions on the <a href="https://allshen.org/docs/user-guide/install/edge/rhel/#step-2-configure-thingsboard-database" target="_blank">ThingsBoard documentation site</a>.
 
 To install the PostgreSQL database, run these commands:
 

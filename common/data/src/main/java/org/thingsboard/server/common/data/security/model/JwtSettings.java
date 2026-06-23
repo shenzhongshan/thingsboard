@@ -41,7 +41,7 @@ public class JwtSettings {
     /**
      * Token issuer.
      */
-    @Schema(description = "The JWT issuer.", example = "alsun.org")
+    @Schema(description = "The JWT issuer.", example = "allshen.org")
     private String tokenIssuer;
 
     /**

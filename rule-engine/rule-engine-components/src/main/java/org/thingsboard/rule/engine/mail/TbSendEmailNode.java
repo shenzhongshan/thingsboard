@@ -46,7 +46,7 @@ import static org.thingsboard.common.util.DonAsynchron.withCallback;
                 "with <code>to Email</code> Node using <code>Successful</code> chain.",
         configDirective = "tbExternalNodeSendEmailConfig",
         icon = "send",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/external/send-email/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/external/send-email/"
 )
 public class TbSendEmailNode extends TbAbstractExternalNode {
 

@@ -172,7 +172,7 @@ public class DefaultSystemDataLoaderService implements SystemDataLoaderService {
     private Integer tokenExpirationTime;
     @Value("${security.jwt.refreshTokenExpTime:604800}")
     private Integer refreshTokenExpTime;
-    @Value("${security.jwt.tokenIssuer:alsun.org}")
+    @Value("${security.jwt.tokenIssuer:allshen.org}")
     private String tokenIssuer;
     @Value("${security.jwt.tokenSigningKey:thingsboardDefaultSigningKey}")
     private String tokenSigningKey;

@@ -78,7 +78,7 @@ public class AdminApiClientTest extends AbstractApiClientTest {
         assertNotNull(jwtSettings);
         assertNotNull(jwtSettings.getTokenExpirationTime());
         assertNotNull(jwtSettings.getRefreshTokenExpTime());
-        assertEquals("alsun.org", jwtSettings.getTokenIssuer());
+        assertEquals("allshen.org", jwtSettings.getTokenIssuer());
         assertNotNull(jwtSettings.getTokenSigningKey());
 
         // get system info

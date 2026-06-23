@@ -75,7 +75,7 @@ import static org.thingsboard.rule.engine.math.TbMathArgumentType.CONSTANT;
                 "If you have rule nodes in different rule chains, they will process messages from the same originator synchronously in the scope of the server node.",
         configDirective = "tbActionNodeMathFunctionConfig",
         icon = "calculate",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/math-function/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/math-function/"
 )
 public class TbMathNode implements TbNode {
 

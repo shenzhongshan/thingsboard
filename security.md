@@ -5,7 +5,7 @@
 Security is of the highest importance and all security vulnerabilities or suspected security vulnerabilities should be reported to Thingsboard privately,
 to minimize attacks against current users of Thingsboard before they are fixed. Vulnerabilities will be investigated and release as soon as possible.
 
-To report a vulnerability or a security-related issue, please email the private address security@alsun.org with the details of the vulnerability.
+To report a vulnerability or a security-related issue, please email the private address security@allshen.org with the details of the vulnerability.
 Emails will be addressed within 3 business days, including a detailed plan to investigate the issue and any potential workarounds to perform in the meantime.
 Do not report non-security-impacting bugs through this channel. Use GitHub issues instead.
 

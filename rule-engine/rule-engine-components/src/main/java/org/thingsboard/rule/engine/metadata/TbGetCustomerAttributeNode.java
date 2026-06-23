@@ -43,7 +43,7 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
                 "or actions such as alarm creation if the threshold is exceeded.<br><br>" +
                 "Output connections: <code>Success</code>, <code>Failure</code>.",
         configDirective = "tbEnrichmentNodeCustomerAttributesConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/enrichment/customer-attributes/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/enrichment/customer-attributes/"
 )
 public class TbGetCustomerAttributeNode extends TbAbstractGetEntityDataNode<CustomerId> {
 

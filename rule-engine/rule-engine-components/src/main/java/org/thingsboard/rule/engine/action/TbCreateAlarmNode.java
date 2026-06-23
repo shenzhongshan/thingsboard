@@ -51,7 +51,7 @@ import java.util.List;
                         "Message metadata can be accessed via <code>metadata</code> property. For example <code>'name = ' + metadata.customerName;</code>.",
         configDirective = "tbActionNodeCreateAlarmConfig",
         icon = "notifications_active",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/create-alarm/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/create-alarm/"
 )
 public class TbCreateAlarmNode extends TbAbstractAlarmNode<TbCreateAlarmNodeConfiguration> {
 

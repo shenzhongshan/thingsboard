@@ -39,7 +39,7 @@ import static org.thingsboard.server.common.data.DataConstants.QUEUE_NAME;
         nodeDescription = "transfers the message to another queue",
         nodeDetails = "After successful transfer incoming message is automatically acknowledged. Queue name is configurable.",
         configDirective = "tbNodeEmptyConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/flow/checkpoint/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/flow/checkpoint/"
 )
 public class TbCheckpointNode implements TbNode {
 

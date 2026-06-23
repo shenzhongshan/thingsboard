@@ -101,7 +101,7 @@ import static org.thingsboard.server.dao.util.KvUtils.toTsKvEntryList;
         configDirective = "tbActionNodeTimeseriesConfig",
         icon = "file_upload",
         version = 1,
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/save-timeseries/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/save-timeseries/"
 )
 public class TbMsgTimeseriesNode implements TbNode {
 

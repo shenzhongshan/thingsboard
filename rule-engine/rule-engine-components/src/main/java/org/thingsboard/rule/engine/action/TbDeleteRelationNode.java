@@ -53,7 +53,7 @@ import static org.thingsboard.common.util.DonAsynchron.withCallback;
         configDirective = "tbActionNodeDeleteRelationConfig",
         icon = "remove_circle",
         version = 1,
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/delete-relation/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/delete-relation/"
 )
 public class TbDeleteRelationNode extends TbAbstractRelationActionNode<TbDeleteRelationNodeConfiguration> {
 

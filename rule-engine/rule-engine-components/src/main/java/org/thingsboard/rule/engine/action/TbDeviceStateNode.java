@@ -59,7 +59,7 @@ import java.util.Set;
         configClazz = TbDeviceStateNodeConfiguration.class,
         relationTypes = {TbNodeConnectionType.SUCCESS, TbNodeConnectionType.FAILURE, "Rate limited"},
         configDirective = "tbActionNodeDeviceStateConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/device-state/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/device-state/"
 )
 public class TbDeviceStateNode implements TbNode {
 

@@ -217,7 +217,7 @@
     "domain-name": "Доменне ім'я",
     "domain-name-unique": "Доменне ім'я та протокол мають бути унікальними.",
     "domain-name-max-length": "Доменне ім'я має бути меншим за 256",
-    "error-verification-url": "Доменне ім'я не повинно містити символи '/' і ':'. Приклад: alsun.org",
+    "error-verification-url": "Доменне ім'я не повинно містити символи '/' і ':'. Приклад: allshen.org",
     "connection-settings": "Налаштування з'єднання",
     "oauth2": {
       "access-token-uri": "URI токена доступу",

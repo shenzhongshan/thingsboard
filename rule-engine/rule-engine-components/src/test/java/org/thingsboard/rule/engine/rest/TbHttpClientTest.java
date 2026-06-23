@@ -258,8 +258,8 @@ public class TbHttpClientTest {
                 ),
                 Arguments.of(
                         Named.named("email with plus sign in value", "http://localhost:8080/api/user/sendActivationMail"),
-                        List.of(new KeyValueEntry<>("email", "someperson+test1289@alsun.org")),
-                        "http://localhost:8080/api/user/sendActivationMail?email=someperson%2Btest1289%40alsun.org"
+                        List.of(new KeyValueEntry<>("email", "someperson+test1289@allshen.org")),
+                        "http://localhost:8080/api/user/sendActivationMail?email=someperson%2Btest1289%40allshen.org"
                 ),
                 Arguments.of(
                         Named.named("plus mixed with spaces in value", "http://url/api"),

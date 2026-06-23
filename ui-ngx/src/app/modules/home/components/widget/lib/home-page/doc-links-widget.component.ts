@@ -40,22 +40,22 @@ const defaultDocLinksMap = new Map<Authority, DocumentationLinks>(
         {
           icon: 'rocket',
           name: 'Getting started',
-          link: 'https://alsun.org/docs/getting-started-guides/helloworld/'
+          link: 'https://allshen.org/docs/getting-started-guides/helloworld/'
         },
         {
           icon: 'title',
           name: 'Tenant profiles',
-          link: 'https://alsun.org/docs/user-guide/tenant-profiles/'
+          link: 'https://allshen.org/docs/user-guide/tenant-profiles/'
         },
         {
           icon: 'insert_chart',
           name: 'API',
-          link: 'https://alsun.org/docs/api/'
+          link: 'https://allshen.org/docs/api/'
         },
         {
           icon: 'now_widgets',
           name: 'Widgets Library',
-          link: 'https://alsun.org/docs/user-guide/ui/widget-library/'
+          link: 'https://allshen.org/docs/user-guide/ui/widget-library/'
         }
       ]
     }],
@@ -64,22 +64,22 @@ const defaultDocLinksMap = new Map<Authority, DocumentationLinks>(
         {
           icon: 'rocket',
           name: 'Getting started',
-          link: 'https://alsun.org/docs/getting-started-guides/helloworld/'
+          link: 'https://allshen.org/docs/getting-started-guides/helloworld/'
         },
         {
           icon: 'settings_ethernet',
           name: 'Rule engine',
-          link: 'https://alsun.org/docs/user-guide/rule-engine-2-0/re-getting-started/'
+          link: 'https://allshen.org/docs/user-guide/rule-engine-2-0/re-getting-started/'
         },
         {
           icon: 'insert_chart',
           name: 'API',
-          link: 'https://alsun.org/docs/api/'
+          link: 'https://allshen.org/docs/api/'
         },
         {
           icon: 'devices',
           name: 'Device profiles',
-          link: 'https://alsun.org/docs/user-guide/device-profiles/'
+          link: 'https://allshen.org/docs/user-guide/device-profiles/'
         }
       ]
     }],
@@ -88,7 +88,7 @@ const defaultDocLinksMap = new Map<Authority, DocumentationLinks>(
         {
           icon: 'rocket',
           name: 'Getting started',
-          link: 'https://alsun.org/docs/getting-started-guides/helloworld/'
+          link: 'https://allshen.org/docs/getting-started-guides/helloworld/'
         }
       ]
     }]

@@ -46,7 +46,7 @@ import java.util.Objects;
                 "Message metadata can be accessed via <code>metadata</code> property. For example <code>'name = ' + metadata.customerName;</code>.",
         configDirective = "tbActionNodeLogConfig",
         icon = "menu",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/log/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/log/"
 )
 public class TbLogNode implements TbNode {
 

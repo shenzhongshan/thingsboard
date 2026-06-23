@@ -65,7 +65,7 @@ import static org.thingsboard.server.dao.edge.BaseRelatedEdgesService.RELATED_ED
         configDirective = "tbActionNodePushToEdgeConfig",
         icon = "cloud_download",
         ruleChainTypes = RuleChainType.CORE,
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/push-to-edge/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/push-to-edge/"
 )
 public class TbMsgPushToEdgeNode extends AbstractTbMsgPushNode<TbMsgPushToEdgeNodeConfiguration, EdgeEvent, EdgeEventType> {
 

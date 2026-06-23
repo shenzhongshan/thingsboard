@@ -217,7 +217,7 @@
     "domain-name": "域名",
     "domain-name-unique": "域名和协议需要唯一。",
     "domain-name-max-length": "域名应少于 256 个字符",
-    "error-verification-url": "域名不应包含符号“/”和“:”。例如：alsun.org",
+    "error-verification-url": "域名不应包含符号“/”和“:”。例如：allshen.org",
     "connection-settings": "连接设置",
     "oauth2": {
       "access-token-uri": "Access token URI",

@@ -45,7 +45,7 @@ import org.thingsboard.server.common.msg.TbMsg;
         configDirective = "tbActionNodeUnAssignToCustomerConfig",
         icon = "remove_circle",
         version = 1,
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/unassign-from-customer/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/unassign-from-customer/"
 )
 public class TbUnassignFromCustomerNode extends TbAbstractCustomerActionNode<TbUnassignFromCustomerNodeConfiguration> {
 

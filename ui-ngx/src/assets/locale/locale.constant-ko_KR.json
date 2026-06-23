@@ -217,7 +217,7 @@
         "domain-name": "도메인 이름",
         "domain-name-unique": "도메인 이름과 프로토콜은 중복되지 않아야 합니다.",
         "domain-name-max-length": "도메인 이름은 256자 미만이어야 합니다.",
-        "error-verification-url": "도메인 이름은 '/'이나 ':'와 같은 문자를 포함할 수 없습니다. 예: alsun.org",
+        "error-verification-url": "도메인 이름은 '/'이나 ':'와 같은 문자를 포함할 수 없습니다. 예: allshen.org",
         "connection-settings": "연결 설정",
         "oauth2": {
             "access-token-uri": "액세스 토큰 URI",

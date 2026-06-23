@@ -217,7 +217,7 @@
     "domain-name": "Nome de domínio",
     "domain-name-unique": "O nome de domínio e o protocolo precisam ser únicos.",
     "domain-name-max-length": "O nome de domínio deve ter menos de 256 caracteres",
-    "error-verification-url": "O nome de domínio não deve conter os símbolos '/' e ':'. Exemplo: alsun.org",
+    "error-verification-url": "O nome de domínio não deve conter os símbolos '/' e ':'. Exemplo: allshen.org",
     "connection-settings": "Configurações de conexão",
     "oauth2": {
       "access-token-uri": "Access token URI",

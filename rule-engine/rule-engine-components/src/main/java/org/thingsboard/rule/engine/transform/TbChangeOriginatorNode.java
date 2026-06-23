@@ -56,7 +56,7 @@ import static org.thingsboard.rule.engine.transform.OriginatorSource.RELATED;
                 "Output connections: <code>Success</code>, <code>Failure</code>.",
         configDirective = "tbTransformationNodeChangeOriginatorConfig",
         icon = "find_replace",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/transformation/change-originator/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/transformation/change-originator/"
 )
 public class TbChangeOriginatorNode extends TbAbstractTransformNode<TbChangeOriginatorNodeConfiguration> {
 

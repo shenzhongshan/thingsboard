@@ -42,7 +42,7 @@ import org.thingsboard.server.common.msg.TbMsg;
                 "to the message originator and use them for further message processing.<br><br>" +
                 "Output connections: <code>Success</code>, <code>Failure</code>.",
         configDirective = "tbEnrichmentNodeDeviceAttributesConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/enrichment/related-device-attributes/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/enrichment/related-device-attributes/"
 )
 public class TbGetDeviceAttrNode extends TbAbstractGetAttributesNode<TbGetDeviceAttrNodeConfiguration, DeviceId> {
 

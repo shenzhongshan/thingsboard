@@ -12,7 +12,7 @@
 
 | 位置 | URL | 说明 |
 |------|-----|------|
-| `ui-ngx/src/app/shared/models/constants.ts:90` | `https://alsun.org` | 前端帮助链接基础 URL |
+| `ui-ngx/src/app/shared/models/constants.ts:90` | `https://allshen.org` | 前端帮助链接基础 URL |
 | `application/src/main/resources/thingsboard.yml:297` | `https://raw.githubusercontent.com/thingsboard/thingsboard-ui-help/release-4.4` | 后端 `UI_HELP_BASE_URL`，可在 YAML 中覆盖 |
 | `ui-ngx/src/app/shared/components/help.component.ts:36` | 动态拼接 | `window.open(helpUrl, '_blank')` 打开帮助 |
 
@@ -21,41 +21,41 @@
 **Getting Started 部件** (`getting-started-widget.component.html`):
 | URL | 说明 |
 |-----|------|
-| `https://alsun.org/docs/user-guide/ui/tenants/` | 租户管理 |
-| `https://alsun.org/docs/user-guide/ui/mail-settings/` | 邮件设置 |
-| `https://alsun.org/docs/user-guide/ui/sms-provider-settings/` | 短信设置 |
-| `https://alsun.org/docs/user-guide/two-factor-authentication/` | 双因素认证 |
-| `https://alsun.org/docs/user-guide/oauth-2-support/` | OAuth2 |
-| `https://alsun.org/docs/user-guide/ui/slack-settings/` | Slack 设置 |
-| `https://alsun.org/docs/getting-started-guides/helloworld/` | 快速入门 |
-| `https://alsun.org/docs/user-guide/alarm-rules/` | 告警规则 |
+| `https://allshen.org/docs/user-guide/ui/tenants/` | 租户管理 |
+| `https://allshen.org/docs/user-guide/ui/mail-settings/` | 邮件设置 |
+| `https://allshen.org/docs/user-guide/ui/sms-provider-settings/` | 短信设置 |
+| `https://allshen.org/docs/user-guide/two-factor-authentication/` | 双因素认证 |
+| `https://allshen.org/docs/user-guide/oauth-2-support/` | OAuth2 |
+| `https://allshen.org/docs/user-guide/ui/slack-settings/` | Slack 设置 |
+| `https://allshen.org/docs/getting-started-guides/helloworld/` | 快速入门 |
+| `https://allshen.org/docs/user-guide/alarm-rules/` | 告警规则 |
 
 **Doc Links 部件** (`doc-links-widget.component.ts`):
 | URL | 说明 |
 |-----|------|
-| `https://alsun.org/docs/getting-started-guides/helloworld/` | 入门指南 |
-| `https://alsun.org/docs/user-guide/tenant-profiles/` | 租户配置 |
-| `https://alsun.org/docs/api/` | API 文档 |
-| `https://alsun.org/docs/user-guide/ui/widget-library/` | 部件库 |
-| `https://alsun.org/docs/user-guide/rule-engine-2-0/re-getting-started/` | 规则引擎 |
-| `https://alsun.org/docs/user-guide/device-profiles/` | 设备配置 |
+| `https://allshen.org/docs/getting-started-guides/helloworld/` | 入门指南 |
+| `https://allshen.org/docs/user-guide/tenant-profiles/` | 租户配置 |
+| `https://allshen.org/docs/api/` | API 文档 |
+| `https://allshen.org/docs/user-guide/ui/widget-library/` | 部件库 |
+| `https://allshen.org/docs/user-guide/rule-engine-2-0/re-getting-started/` | 规则引擎 |
+| `https://allshen.org/docs/user-guide/device-profiles/` | 设备配置 |
 
 ### 2.3 设备连接检查对话框
 
 **文件**: `device-check-connectivity-dialog.component.html`
 | URL | 说明 |
 |-----|------|
-| `https://alsun.org/docs/reference/mqtt-sparkplug-api/` | MQTT Sparkplug |
-| `https://alsun.org/docs/reference/mqtt-api/` | MQTT API |
-| `https://alsun.org/docs/user-guide/mqtt-over-ssl/` | MQTT SSL |
-| `https://alsun.org/docs/user-guide/ssl/coap-access-token/` | CoAP SSL |
-| `https://alsun.org/docs/user-guide/ssl/coap-x509-certificates/` | CoAP X.509 |
-| `https://alsun.org/docs/reference/snmp-api/` | SNMP API |
-| `https://alsun.org/docs/reference/lwm2m-api/` | LwM2M API |
+| `https://allshen.org/docs/reference/mqtt-sparkplug-api/` | MQTT Sparkplug |
+| `https://allshen.org/docs/reference/mqtt-api/` | MQTT API |
+| `https://allshen.org/docs/user-guide/mqtt-over-ssl/` | MQTT SSL |
+| `https://allshen.org/docs/user-guide/ssl/coap-access-token/` | CoAP SSL |
+| `https://allshen.org/docs/user-guide/ssl/coap-x509-certificates/` | CoAP X.509 |
+| `https://allshen.org/docs/reference/snmp-api/` | SNMP API |
+| `https://allshen.org/docs/reference/lwm2m-api/` | LwM2M API |
 
 ### 2.4 规则引擎节点内置文档链接
 
-每个规则引擎节点的 Java 文件中都有 `docUrl` 字段，格式为 `https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/{node-type}/`，共 40+ 个节点。例如：
+每个规则引擎节点的 Java 文件中都有 `docUrl` 字段，格式为 `https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/{node-type}/`，共 40+ 个节点。例如：
 - `TbTransformMsgNode.java` — 变换节点
 - `TbSendRPCRequestNode.java` — RPC 请求节点
 - `TbSendEmailNode.java` — 邮件节点
@@ -169,7 +169,7 @@ ACE 编辑器中的类型提示跳转到 GitHub 源码：
 ```
 DEEP_LINK_PATTERN = "https://%s/api/noauth/qr?secret=%s&ttl=%s"
 ```
-域名由 `mobileApp.domain` 配置，默认 `demo.alsun.org`
+域名由 `mobileApp.domain` 配置，默认 `demo.allshen.org`
 
 ### 6.3 应用商店链接
 
@@ -202,10 +202,10 @@ DEEP_LINK_PATTERN = "https://%s/api/noauth/qr?secret=%s&ttl=%s"
 **文件**: `DefaultUpdateService.java`
 | URL | 说明 |
 |------|------|
-| `https://updates.alsun.org/api/v2/thingsboard/updates` | 版本更新检查 |
-| `https://updates.alsun.org/api/v1/edge/installMapping` | Edge 安装映射 |
-| `https://updates.alsun.org/api/v1/edge/upgradeMapping` | Edge 升级映射 |
-| `https://alsun.org/docs/reference/releases` | 降级显示用发行说明 |
+| `https://updates.allshen.org/api/v2/thingsboard/updates` | 版本更新检查 |
+| `https://updates.allshen.org/api/v1/edge/installMapping` | Edge 安装映射 |
+| `https://updates.allshen.org/api/v1/edge/upgradeMapping` | Edge 升级映射 |
+| `https://allshen.org/docs/reference/releases` | 降级显示用发行说明 |
 
 ---
 
@@ -232,7 +232,7 @@ DEEP_LINK_PATTERN = "https://%s/api/noauth/qr?secret=%s&ttl=%s"
 
 ```
 img-src:
-  - https://img.alsun.org
+  - https://img.allshen.org
   - https://tile.openstreetmap.org
   - https://*.tile.openstreetmap.org
   - https://*.arcgis.com
@@ -252,7 +252,7 @@ connect-src:
 
 | URL | 用途 |
 |-----|------|
-| `https://repo.alsun.org/artifactory/libs-release-public` | ThingsBoard 私有仓库 |
+| `https://repo.allshen.org/artifactory/libs-release-public` | ThingsBoard 私有仓库 |
 | `https://repo1.maven.org/maven2/` | Maven Central |
 | `https://repo.spring.io/snapshot` | Spring 快照 |
 | `https://repo.spring.io/milestone` | Spring 里程碑 |
@@ -269,8 +269,8 @@ connect-src:
 
 ### 11.3 其他配置
 
-**thingsboard.yml:168**: JWT Token Issuer 默认值 = `alsun.org`
-**thingsboard.yml:1712-1719**: Swagger API 联系方式 = `https://alsun.org`
+**thingsboard.yml:168**: JWT Token Issuer 默认值 = `allshen.org`
+**thingsboard.yml:1712-1719**: Swagger API 联系方式 = `https://allshen.org`
 
 ---
 
@@ -278,9 +278,9 @@ connect-src:
 
 | 域名 | 用途分类 |
 |------|----------|
-| `alsun.org` | 文档 / 发布说明 / Swagger / Token Issuer |
-| `updates.alsun.org` | 版本更新检查 |
-| `img.alsun.org` | CSP 图片白名单 |
+| `allshen.org` | 文档 / 发布说明 / Swagger / Token Issuer |
+| `updates.allshen.org` | 版本更新检查 |
+| `img.allshen.org` | CSP 图片白名单 |
 | `github.com` / `api.github.com` | 源码链接 / OAuth2 / Star API |
 | `raw.githubusercontent.com` | 帮助系统资源 |
 | `tile.openstreetmap.org` | 地图瓦片 |
@@ -293,7 +293,7 @@ connect-src:
 | `fcm.googleapis.com` | Firebase 推送 (运行时) |
 | `play.google.com` / `apps.apple.com` | 应用商店 |
 | `sqs.us-east-1.amazonaws.com` | AWS SQS (示例模式) |
-| `repo.alsun.org` | Maven 仓库 |
+| `repo.allshen.org` | Maven 仓库 |
 | `repo1.maven.org` | Maven Central |
 | `repo.spring.io` | Spring 仓库 |
 | `postgresql.org` / `apache.org` | Docker 镜像构建 |
@@ -305,8 +305,8 @@ connect-src:
 1. **CSP 策略**: 配置生产环境 CSP 时，仅包含实际使用的外部域名
 2. **出站防火墙**: 限制 ThingsBoard 服务器只能访问必要的出站端口和 IP
 3. **用户可配置 URL**: 对部件的 "Open URL" 动作、通知链接、REST API Call 节点等，考虑在部署层添加 URL 白名单机制
-4. **更新服务**: 如果不需要自动更新检查，可通过环境变量 `UPDATES_ENABLED=false` 禁用到 `updates.alsun.org` 的请求
-5. **文档链接**: 所有 `alsun.org/docs/` 链接为只读文档，但可通过代理或拦截列表过滤
+4. **更新服务**: 如果不需要自动更新检查，可通过环境变量 `UPDATES_ENABLED=false` 禁用到 `updates.allshen.org` 的请求
+5. **文档链接**: 所有 `allshen.org/docs/` 链接为只读文档，但可通过代理或拦截列表过滤
 
 ---
 

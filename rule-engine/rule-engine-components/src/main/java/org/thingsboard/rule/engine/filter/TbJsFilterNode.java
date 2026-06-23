@@ -43,7 +43,7 @@ import static org.thingsboard.common.util.DonAsynchron.withCallback;
                 "Message type can be accessed via <code>msgType</code> property.<br><br>" +
                 "Output connections: <code>True</code>, <code>False</code>, <code>Failure</code>",
         configDirective = "tbFilterNodeScriptConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/filter/script/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/filter/script/"
 )
 public class TbJsFilterNode implements TbNode {
 

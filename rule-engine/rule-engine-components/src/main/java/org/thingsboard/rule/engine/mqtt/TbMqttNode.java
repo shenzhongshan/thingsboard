@@ -58,7 +58,7 @@ import java.util.concurrent.TimeoutException;
         nodeDetails = "Will publish message payload to the MQTT broker with QoS <b>AT_LEAST_ONCE</b>.",
         configDirective = "tbExternalNodeMqttConfig",
         icon = "call_split",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/external/mqtt/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/external/mqtt/"
 )
 public class TbMqttNode extends TbAbstractExternalNode {
 

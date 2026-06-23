@@ -52,7 +52,7 @@ import static org.thingsboard.common.util.DonAsynchron.withCallback;
                 "In both cases, relation lookup is based on configured direction and type.<br><br>" +
                 "Output connections: <code>True</code>, <code>False</code>, <code>Failure</code>",
         configDirective = "tbFilterNodeCheckRelationConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/filter/check-relation-presence/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/filter/check-relation-presence/"
 )
 public class TbCheckRelationNode implements TbNode {
 

@@ -41,7 +41,7 @@ import org.thingsboard.server.common.msg.TbMsg;
         configDirective = "tbActionNodeAssignToCustomerConfig",
         icon = "add_circle",
         version = 1,
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/assign-to-customer/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/assign-to-customer/"
 )
 public class TbAssignToCustomerNode extends TbAbstractCustomerActionNode<TbAssignToCustomerNodeConfiguration> {
 

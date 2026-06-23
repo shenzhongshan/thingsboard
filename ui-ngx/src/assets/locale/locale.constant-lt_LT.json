@@ -216,7 +216,7 @@
     "domain-name": "Domeno pavadinimas",
     "domain-name-unique": "Domeno pavadinimas ir protokolas turi būti unikalūs.",
     "domain-name-max-length": "Domeno pavadinimas turi būti trumpesnis nei 256 simboliai",
-    "error-verification-url": "Domeno pavadinime neturi būti simbolių '/' ir ':'. Pavyzdys: alsun.org",
+    "error-verification-url": "Domeno pavadinime neturi būti simbolių '/' ir ':'. Pavyzdys: allshen.org",
     "connection-settings": "Ryšio nustatymai",
     "oauth2": {
       "access-token-uri": "Prieigos rakto URI",

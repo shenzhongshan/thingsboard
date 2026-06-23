@@ -87,7 +87,7 @@ export const resolveBreakpoint = (breakpoint: string): string => {
   return breakpoint;
 };
 
-export const helpBaseUrl = 'https://alsun.org';
+export const helpBaseUrl = 'https://allshen.org';
 
 export const docPlatformPrefix = '';
 

@@ -40,7 +40,7 @@ import java.util.concurrent.ExecutionException;
                 "Output connections: <code>Success</code>, <code>Failure</code>.",
         icon = "functions",
         configDirective = "tbTransformationNodeJsonPathConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/transformation/json-path/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/transformation/json-path/"
 )
 public class TbJsonPathNode implements TbNode {
 

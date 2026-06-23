@@ -45,7 +45,7 @@ import java.util.Set;
                 "Message type can be accessed via <code>msgType</code> property.<br><br>" +
                 "Output connections: <i>Custom connection(s) defined by switch node</i> or <code>Failure</code>",
         configDirective = "tbFilterNodeSwitchConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/filter/switch/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/filter/switch/"
 )
 public class TbJsSwitchNode implements TbNode {
 

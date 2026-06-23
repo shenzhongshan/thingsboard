@@ -42,7 +42,7 @@ import java.util.Map;
                 "Output connections: <code>Success</code>, <code>Failure</code>.",
         configDirective = "tbTransformationNodeToEmailConfig",
         icon = "email",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/transformation/to-email/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/transformation/to-email/"
 )
 public class TbMsgToEmailNode implements TbNode {
 

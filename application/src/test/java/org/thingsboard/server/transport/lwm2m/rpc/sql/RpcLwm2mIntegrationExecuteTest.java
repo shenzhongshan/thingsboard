@@ -121,12 +121,12 @@ public class RpcLwm2mIntegrationExecuteTest extends AbstractRpcLwM2MIntegrationT
     /**
      * execute_resource_with_parameters (execute Factory Reset with two arguments:
      * digit 2 without a value and digit 0 with the link value on device)
-     * Execute {"id":"3/0/5","value":"2,0='https://alsun.org/docs/reference/lwm2m-api/'"}
+     * Execute {"id":"3/0/5","value":"2,0='https://allshen.org/docs/reference/lwm2m-api/'"}
      */
     @Test
     public void testExecuteResourceWithParametersMultipleArgumentsIncludingLinkById_Result_Ok() throws Exception {
         String expectedPath = objectInstanceIdVer_3 + "/" + RESOURCE_ID_5;
-        Object expectedValue = "2,0='https://alsun.org/docs/reference/lwm2m-api/'";
+        Object expectedValue = "2,0='https://allshen.org/docs/reference/lwm2m-api/'";
         String actualResult = sendRPCExecuteWithValueById(expectedPath, expectedValue);
         ObjectNode rpcActualResult = JacksonUtil.fromString(actualResult, ObjectNode.class);
         assertEquals(ResponseCode.CHANGED.getName(), rpcActualResult.get("result").asText());

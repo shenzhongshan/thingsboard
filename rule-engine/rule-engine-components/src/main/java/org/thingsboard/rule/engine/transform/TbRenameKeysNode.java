@@ -45,7 +45,7 @@ import java.util.concurrent.ExecutionException;
                 "Output connections: <code>Success</code>, <code>Failure</code>.",
         configDirective = "tbTransformationNodeRenameKeysConfig",
         icon = "find_replace",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/transformation/rename-keys/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/transformation/rename-keys/"
 )
 public class TbRenameKeysNode extends TbAbstractTransformNodeWithTbMsgSource {
 

@@ -33,7 +33,7 @@ import org.thingsboard.server.common.msg.TbMsg;
                 " etc. via corresponding chain, otherwise <b>Other</b> chain is used.<br><br>" +
                 "Output connections: <i>Message type connection</i>, <code>Other</code> - if message type is custom or <code>Failure</code>",
         configDirective = "tbNodeEmptyConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/filter/message-type-switch/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/filter/message-type-switch/"
 )
 public class TbMsgTypeSwitchNode implements TbNode {
 

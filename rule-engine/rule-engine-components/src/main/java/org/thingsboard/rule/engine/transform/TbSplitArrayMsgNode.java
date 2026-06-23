@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutionException;
                 "Output connections: <code>Success</code>, <code>Failure</code>.",
         icon = "content_copy",
         configDirective = "tbNodeEmptyConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/transformation/split-array-msg/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/transformation/split-array-msg/"
 )
 public class TbSplitArrayMsgNode implements TbNode {
 

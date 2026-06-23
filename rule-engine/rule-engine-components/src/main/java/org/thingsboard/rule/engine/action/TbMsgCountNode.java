@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicLong;
         nodeDetails = "Count incoming messages for specified interval and produces POST_TELEMETRY_REQUEST msg with messages count",
         icon = "functions",
         configDirective = "tbActionNodeMsgCountConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/message-count/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/message-count/"
 )
 public class TbMsgCountNode implements TbNode {
 

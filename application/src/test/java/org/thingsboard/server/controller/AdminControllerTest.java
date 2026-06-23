@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @DaoSqlTest
 public class AdminControllerTest extends AbstractControllerTest {
-    final JwtSettings defaultJwtSettings = new JwtSettings(9000, 604800, "alsun.org", "QmlicmJkZk9tSzZPVFozcWY0Sm94UVhybmtBWXZ5YmZMOUZSZzZvcUFiOVhsb3VHUThhUWJGaXp3UHhtcGZ6Tw==");
+    final JwtSettings defaultJwtSettings = new JwtSettings(9000, 604800, "allshen.org", "QmlicmJkZk9tSzZPVFozcWY0Sm94UVhybmtBWXZ5YmZMOUZSZzZvcUFiOVhsb3VHUThhUWJGaXp3UHhtcGZ6Tw==");
 
     @Test
     public void testFindAdminSettingsByKey() throws Exception {

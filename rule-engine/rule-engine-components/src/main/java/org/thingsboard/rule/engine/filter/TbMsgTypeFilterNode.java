@@ -34,7 +34,7 @@ import org.thingsboard.server.common.msg.TbMsg;
         nodeDetails = "If incoming message type is expected - send Message via <b>True</b> chain, otherwise <b>False</b> chain is used.<br><br>" +
                 "Output connections: <code>True</code>, <code>False</code>, <code>Failure</code>",
         configDirective = "tbFilterNodeMessageTypeConfig",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/filter/message-type-filter/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/filter/message-type-filter/"
 )
 public class TbMsgTypeFilterNode implements TbNode {
 

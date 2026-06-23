@@ -46,7 +46,7 @@ import static com.google.common.util.concurrent.Futures.transformAsync;
                 Message metadata can be accessed via <code>metadata</code> property. For example <code>'name = ' + metadata.customerName;</code>.""",
         configDirective = "tbActionNodeClearAlarmConfig",
         icon = "notifications_off",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/clear-alarm/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/clear-alarm/"
 )
 public class TbClearAlarmNode extends TbAbstractAlarmNode<TbClearAlarmNodeConfiguration> {
 

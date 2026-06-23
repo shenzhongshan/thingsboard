@@ -35,7 +35,7 @@ import java.util.UUID;
         nodeDetails = "Expects messages with any message type. Forwards incoming message as a reply to REST API call sent to rule engine.",
         configDirective = "tbActionNodeSendRestApiCallReplyConfig",
         icon = "call_merge",
-        docUrl = "https://alsun.org/docs/user-guide/rule-engine-2-0/nodes/action/rest-call-reply/"
+        docUrl = "https://allshen.org/docs/user-guide/rule-engine-2-0/nodes/action/rest-call-reply/"
 )
 public class TbSendRestApiCallReplyNode implements TbNode {
 
