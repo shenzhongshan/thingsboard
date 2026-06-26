@@ -23,6 +23,7 @@ import {
   defaultOpenFreeMapLayerSettings,
   defaultOpenStreetMapLayerSettings,
   defaultTencentMapLayerSettings,
+  defaultTiandituMapLayerSettings,
   GoogleMapLayerSettings,
   HereMapLayerSettings,
   MapLayerSettings,
@@ -31,7 +32,9 @@ import {
   OpenFreeMapStyleType,
   OpenStreetMapLayerSettings,
   ReferenceLayerType,
-  TencentMapLayerSettings
+  TencentMapLayerSettings,
+  TiandituLayerType,
+  TiandituMapLayerSettings
 } from '@shared/models/widget/maps/map.models';
 import { WidgetContext } from '@home/models/widget-component.models';
 import { DeepPartial } from '@shared/models/common';
@@ -72,6 +75,8 @@ export abstract class TbMapLayer<S extends MapLayerSettings> {
         return new TbGoogleMapLayer(ctx, inputSettings);
       case MapProvider.tencent:
         return new TbTencentMapLayer(ctx, inputSettings);
+      case MapProvider.tianditu:
+        return new TbTiandituMapLayer(ctx, inputSettings);
       case MapProvider.here:
         return new TbHereMapLayer(ctx, inputSettings);
       case MapProvider.custom:
@@ -314,6 +319,65 @@ class TbTencentMapLayer extends TbMapLayer<TencentMapLayerSettings> {
       attribution: '&copy;2024 Tencent - GS(2023)1171号'
     });
     return of(layer);
+  }
+
+}
+
+class TiandituTileLayer extends L.TileLayer {
+  private _tk: string;
+  constructor(urlTemplate: string, tk: string, options?: L.TileLayerOptions) {
+    super(urlTemplate, options);
+    this._tk = tk;
+  }
+  getTileUrl(coords: L.Coords): string {
+    const data: any = {
+      s: this._getSubdomain(coords),
+      x: coords.x,
+      y: coords.y,
+      z: this._getZoomForUrl()
+    };
+    if (this._map && !this._map.options.crs.infinite) {
+      data['-y'] = (this._globalTileRange.max.y - coords.y);
+    }
+    data['tk'] = this._tk;
+    return L.Util.template(this._url, L.Util.extend(data, this.options));
+  }
+}
+
+const TIANDITU_BASE_URLS: Record<string, { base: string; annot: string }> = {
+  [TiandituLayerType.tiandituNormal]: {
+    base: 'https://t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk={tk}',
+    annot: 'https://t{s}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk={tk}'
+  },
+  [TiandituLayerType.tiandituSatellite]: {
+    base: 'https://t{s}.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk={tk}',
+    annot: 'https://t{s}.tianditu.gov.cn/cia_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk={tk}'
+  }
+};
+
+class TbTiandituMapLayer extends TbMapLayer<TiandituMapLayerSettings> {
+
+  constructor(protected ctx: WidgetContext,
+              protected inputSettings: DeepPartial<MapLayerSettings>) {
+    super(ctx, inputSettings);
+  }
+
+  protected defaultSettings(): TiandituMapLayerSettings {
+    return defaultTiandituMapLayerSettings;
+  }
+
+  protected createLayer(): Observable<L.Layer> {
+    const urls = TIANDITU_BASE_URLS[this.settings.layerType];
+    const key = this.settings.tiandituKey;
+    const subdomains = '01234567';
+    const baseLayer = new TiandituTileLayer(urls.base, key, {
+      subdomains, attribution: '&copy; 天地图 Tianditu',
+      maxNativeZoom: 18, maxZoom: 21
+    });
+    const annotLayer = new TiandituTileLayer(urls.annot, key, {
+      subdomains, maxNativeZoom: 18, maxZoom: 21
+    });
+    return of(L.layerGroup([baseLayer, annotLayer]));
   }
 
 }

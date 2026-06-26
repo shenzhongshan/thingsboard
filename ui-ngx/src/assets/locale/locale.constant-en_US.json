@@ -8930,6 +8930,11 @@
                         "satellite": "Satellite",
                         "terrain": "Terrain"
                     },
+                    "tianditu": {
+                        "title": "Tianditu",
+                        "normal": "Vector",
+                        "satellite": "Satellite+Label"
+                    },
                     "custom": {
                         "title": "Custom",
                         "tile-url": "Tile URL",

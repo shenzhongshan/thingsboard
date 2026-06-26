@@ -246,7 +246,7 @@ security:
       # Enable/disable Content-Security-Policy header. Mitigates XSS and data injection attacks
       enabled: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_ENABLED:false}"
       # Full CSP directive string. The default value is a working policy for most ThingsBoard deployments
-      value: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_VALUE:default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://img.allshen.org https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.arcgis.com; font-src 'self' data:; connect-src 'self' ws: wss: https://*.arcgis.com https://*.arcgisonline.com; worker-src 'self' blob:; frame-ancestors 'self'}"
+      value: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_VALUE:default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://img.allshen.org https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.arcgis.com http://*.tianditu.gov.cn https://*.tianditu.gov.cn; font-src 'self' data:; connect-src 'self' ws: wss: https://*.arcgis.com https://*.arcgisonline.com http://*.tianditu.gov.cn https://*.tianditu.gov.cn; worker-src 'self' blob:; frame-ancestors 'self'}"
       # If true, uses Content-Security-Policy-Report-Only header instead — the browser
       # reports violations but does not enforce them. Use for testing before enforcing.
       report-only: "${SECURITY_HEADERS_CONTENT_SECURITY_POLICY_REPORT_ONLY:false}"

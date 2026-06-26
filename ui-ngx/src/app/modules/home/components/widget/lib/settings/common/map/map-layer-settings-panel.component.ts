@@ -34,7 +34,9 @@ import {
   openStreetLayerTypes,
   openStreetMapLayerTranslationMap, referenceLayerTypes, referenceLayerTypeTranslationMap,
   tencentLayerTranslationMap,
-  tencentLayerTypes
+  tencentLayerTypes,
+  tiandituLayerTranslationMap,
+  tiandituLayerTypes
 } from '@shared/models/widget/maps/map.models';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -74,6 +76,10 @@ export class MapLayerSettingsPanelComponent implements OnInit {
 
   tencentLayerTranslationMap = tencentLayerTranslationMap;
 
+  tiandituLayerTypes = tiandituLayerTypes;
+
+  tiandituLayerTranslationMap = tiandituLayerTranslationMap;
+
   referenceLayerTypes = referenceLayerTypes;
 
   referenceLayerTypeTranslationMap = referenceLayerTypeTranslationMap;
@@ -104,12 +110,17 @@ export class MapLayerSettingsPanelComponent implements OnInit {
         vectorTiles: [false, []],
         customAttribution: [null, []],
         apiKey: [null, [Validators.required]],
+        tiandituKey: [null, []],
         referenceLayer: [null, []]
       }
     );
     this.layerFormGroup.patchValue(
       this.mapLayerSettings, {emitEvent: false}
     );
+    this.updateValidators();
+    if (this.mapLayerSettings?.provider) {
+      this.layerFormGroup.markAsDirty();
+    }
     this.layerFormGroup.get('provider').valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe((newProvider: MapProvider) => {
@@ -147,6 +158,7 @@ export class MapLayerSettingsPanelComponent implements OnInit {
       modelValue, {emitEvent: false}
     );
     this.updateValidators();
+    this.layerFormGroup.markAsDirty();
   }
 
   private updateValidators() {
@@ -167,5 +179,13 @@ export class MapLayerSettingsPanelComponent implements OnInit {
     } else {
       this.layerFormGroup.get('apiKey').disable({emitEvent: false});
     }
+    if (MapProvider.tianditu === provider) {
+      this.layerFormGroup.get('tiandituKey').enable({emitEvent: false});
+      this.layerFormGroup.get('tiandituKey').setValidators([Validators.required]);
+    } else {
+      this.layerFormGroup.get('tiandituKey').disable({emitEvent: false});
+      this.layerFormGroup.get('tiandituKey').clearValidators();
+    }
+    this.layerFormGroup.get('tiandituKey').updateValueAndValidity({emitEvent: false});
   }
 }

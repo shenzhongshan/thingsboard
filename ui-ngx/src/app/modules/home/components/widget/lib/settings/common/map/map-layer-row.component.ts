@@ -54,7 +54,9 @@ import {
   openStreetLayerTypes,
   openStreetMapLayerTranslationMap,
   tencentLayerTranslationMap,
-  tencentLayerTypes
+  tencentLayerTypes,
+  tiandituLayerTranslationMap,
+  tiandituLayerTypes
 } from '@shared/models/widget/maps/map.models';
 import { deepClone } from '@core/utils';
 import {
@@ -103,6 +105,10 @@ export class MapLayerRowComponent implements ControlValueAccessor, OnInit {
 
   tencentLayerTranslationMap = tencentLayerTranslationMap;
 
+  tiandituLayerTypes = tiandituLayerTypes;
+
+  tiandituLayerTranslationMap = tiandituLayerTranslationMap;
+
   @Input()
   disabled: boolean;
 
@@ -133,6 +139,7 @@ export class MapLayerRowComponent implements ControlValueAccessor, OnInit {
       vectorTiles: [false, []],
       customAttribution: [null, []],
       apiKey: [null, [Validators.required]],
+      tiandituKey: [null, []],
       referenceLayer: [null, []]
     });
     this.layerFormGroup.valueChanges.pipe(
@@ -238,6 +245,14 @@ export class MapLayerRowComponent implements ControlValueAccessor, OnInit {
     } else {
       this.layerFormGroup.get('apiKey').disable({emitEvent: false});
     }
+    if (MapProvider.tianditu === provider) {
+      this.layerFormGroup.get('tiandituKey').enable({emitEvent: false});
+      this.layerFormGroup.get('tiandituKey').setValidators([Validators.required]);
+    } else {
+      this.layerFormGroup.get('tiandituKey').disable({emitEvent: false});
+      this.layerFormGroup.get('tiandituKey').clearValidators();
+    }
+    this.layerFormGroup.get('tiandituKey').updateValueAndValidity({emitEvent: false});
   }
 
   private updateModel() {

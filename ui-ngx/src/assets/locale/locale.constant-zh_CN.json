@@ -8895,6 +8895,11 @@
             "satellite": "卫星图",
             "terrain": "地形图"
           },
+          "tianditu": {
+            "title": "天地图",
+            "normal": "矢量",
+            "satellite": "影像+注记"
+          },
           "custom": {
             "title": "自定义",
             "tile-url": "瓦片 URL"
