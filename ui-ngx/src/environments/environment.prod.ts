@@ -15,7 +15,7 @@
 ///
 
 export const environment = {
-  appTitle: 'ThingsBoard',
+  appTitle: '微物联',
   production: true,
 // @ts-ignore
   tbVersion: TB_VERSION,
