@@ -1,5 +1,6 @@
 {
   "title": "Tenant Administrator Home Page",
+  "name": "Tenant Administrator Home Page",
   "image": null,
   "mobileHide": false,
   "mobileOrder": null,
@@ -43,85 +44,6 @@
         "col": 0,
         "id": "d70cc256-4c7b-ee06-9905-b8c5e546605f",
         "typeFullFqn": "system.cards.markdown_card"
-      },
-      "867f82cf-ecf2-2d5c-35cb-08c6f2edc3a4": {
-        "type": "static",
-        "sizeX": 7.5,
-        "sizeY": 3,
-        "config": {
-          "datasources": [],
-          "showTitle": false,
-          "backgroundColor": "rgb(255, 255, 255)",
-          "color": "rgba(0, 0, 0, 0.87)",
-          "padding": "16px",
-          "settings": {
-            "columns": 2
-          },
-          "title": "Documentation",
-          "dropShadow": false,
-          "enableFullscreen": false,
-          "widgetStyle": {},
-          "widgetCss": "",
-          "pageSize": 1024,
-          "noDataDisplayMessage": "",
-          "showLegend": false
-        },
-        "row": 0,
-        "col": 0,
-        "id": "867f82cf-ecf2-2d5c-35cb-08c6f2edc3a4",
-        "typeFullFqn": "system.home_page_widgets.documentation_links"
-      },
-      "ebbd0a6e-8a47-e770-5086-7f4974250f2d": {
-        "type": "static",
-        "sizeX": 7.5,
-        "sizeY": 6.5,
-        "config": {
-          "showTitle": false,
-          "backgroundColor": "rgb(255, 255, 255)",
-          "color": "rgba(0, 0, 0, 0.87)",
-          "padding": "16px",
-          "settings": {},
-          "title": "New Usage info",
-          "dropShadow": false,
-          "enableFullscreen": false,
-          "widgetStyle": {},
-          "widgetCss": "",
-          "pageSize": 1024,
-          "noDataDisplayMessage": "",
-          "showLegend": false,
-          "datasources": []
-        },
-        "row": 0,
-        "col": 0,
-        "id": "ebbd0a6e-8a47-e770-5086-7f4974250f2d",
-        "typeFullFqn": "system.home_page_widgets.usage_info"
-      },
-      "9e3ef045-d8bc-1640-a3f4-2dd10b19d50e": {
-        "type": "static",
-        "sizeX": 7.5,
-        "sizeY": 3,
-        "config": {
-          "showTitle": false,
-          "backgroundColor": "rgb(255, 255, 255)",
-          "color": "rgba(0, 0, 0, 0.87)",
-          "padding": "16px",
-          "settings": {
-            "columns": 2
-          },
-          "title": "Quick links",
-          "dropShadow": false,
-          "enableFullscreen": false,
-          "widgetStyle": {},
-          "widgetCss": "",
-          "pageSize": 1024,
-          "noDataDisplayMessage": "",
-          "showLegend": false,
-          "datasources": []
-        },
-        "row": 0,
-        "col": 0,
-        "id": "9e3ef045-d8bc-1640-a3f4-2dd10b19d50e",
-        "typeFullFqn": "system.home_page_widgets.quick_links"
       },
       "6d6e2b1d-6ce7-4678-3745-c6b0897b2674": {
         "type": "static",
@@ -1089,49 +1011,6 @@
         "col": 0,
         "id": "ed33e56f-293b-aaaa-ad19-0cf499dc926f",
         "typeFullFqn": "system.home_page_widgets.getting_started"
-      },
-      "8c5207d8-7103-4dc2-db48-d61c0c8c61fd": {
-        "typeFullFqn": "system.mobile_app_qr_code",
-        "type": "static",
-        "sizeX": 6,
-        "sizeY": 3,
-        "config": {
-          "showTitle": true,
-          "backgroundColor": "rgb(255, 255, 255)",
-          "color": "rgba(0, 0, 0, 0.87)",
-          "padding": "16px",
-          "settings": {
-            "useSystemSettings": true,
-            "qrCodeConfig": {
-              "badgeEnabled": true,
-              "badgePosition": "RIGHT",
-              "qrCodeLabelEnabled": true,
-              "qrCodeLabel": "Scan to connect or download mobile app"
-            },
-            "background": {
-              "type": "color",
-              "color": "#fff",
-              "overlay": {
-                "enabled": false,
-                "color": "rgba(255,255,255,0.72)",
-                "blur": 3
-              }
-            }
-          },
-          "title": "{i18n:admin.mobile-app.connect-mobile-app}",
-          "dropShadow": false,
-          "enableFullscreen": false,
-          "widgetStyle": {},
-          "widgetCss": " .tb-widget-container > .tb-widget > .tb-widget-content .tb-widget-title > .title-row > .title {\n    padding: 0;\n}\n\n .tb-widget-container > .tb-widget > .tb-widget-content .tb-widget-title > .title-row > .title {\n    padding-bottom: 8px;\n    font-weight: 600;\n    font-size: 20px;\n    line-height: 24px;\n    letter-spacing: 0.1px;\n    color: rgba(0, 0, 0, 0.76);\n}\n\n.tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel {\n    padding: 0;\n}\n\n@media screen and (min-width: 960px) and (max-width: 1819px) {\n    .tb-widget-container > .tb-widget > .tb-widget-content .tb-widget-title > .title-row > .title {\n        padding-bottom: 0;\n        font-weight: 500;\n        font-size: 14px;\n        line-height: 20px;\n        letter-spacing: 0.25px;\n  }\n}\n\n@media screen and (min-width: 960px) and (max-width: 1182px) {\n    .tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel {\n        gap: 0;\n    }\n    .tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel .tb-qrcode {\n        min-width: 150px;\n    }\n}\n\n@media screen and (max-width: 960px) {\n    .tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel .tb-qrcode {\n        max-width: 120px;\n    }\n    \n    .tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel .tb-badges {\n        max-width: 160px;\n    }\n}\n\n@media screen and (min-width: 1819px) {\n    .tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel .tb-qrcode {\n        max-width: 125px;\n    }\n    \n    .tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel .tb-badges {\n        max-width: 160px;\n    }\n}\n\n@media screen and (min-width: 960px) and (max-height: 990px) {\n    .tb-widget-container > .tb-widget > .tb-widget-content > .tb-widget .tb-mobile-app-qrcode-panel .tb-qrcode-label {\n        display: none;\n    }\n}",
-          "showTitleIcon": false,
-          "titleTooltip": "",
-          "titleStyle": null,
-          "borderRadius": "12px",
-          "datasources": []
-        },
-        "row": 0,
-        "col": 0,
-        "id": "8c5207d8-7103-4dc2-db48-d61c0c8c61fd"
       }
     },
     "states": {
@@ -1143,37 +1022,15 @@
             "widgets": {
               "d70cc256-4c7b-ee06-9905-b8c5e546605f": {
                 "sizeX": 42,
-                "sizeY": 29,
+                "sizeY": 44,
                 "row": 13,
                 "col": 43,
                 "mobileOrder": 4,
                 "mobileHeight": 10
               },
-              "867f82cf-ecf2-2d5c-35cb-08c6f2edc3a4": {
-                "sizeX": 29,
-                "sizeY": 16,
-                "row": 42,
-                "col": 28,
-                "mobileHide": true
-              },
-              "ebbd0a6e-8a47-e770-5086-7f4974250f2d": {
-                "sizeX": 28,
-                "sizeY": 16,
-                "row": 42,
-                "col": 57,
-                "mobileOrder": 3,
-                "mobileHeight": 10
-              },
-              "9e3ef045-d8bc-1640-a3f4-2dd10b19d50e": {
-                "sizeX": 28,
-                "sizeY": 16,
-                "row": 42,
-                "col": 0,
-                "mobileHide": true
-              },
               "6d6e2b1d-6ce7-4678-3745-c6b0897b2674": {
                 "sizeX": 43,
-                "sizeY": 29,
+                "sizeY": 44,
                 "row": 13,
                 "col": 0,
                 "mobileOrder": 2,
@@ -1197,10 +1054,10 @@
               },
               "35bda856-2495-4f72-e35e-925bac8b8da7": {
                 "sizeX": 35,
-                "sizeY": 58,
+                "sizeY": 57,
                 "row": 0,
                 "col": 85,
-                "mobileHide": false,
+                "mobileHide": true,
                 "mobileHeight": 7
               }
             },
@@ -1287,12 +1144,6 @@
                 "row": 0,
                 "col": 0,
                 "mobileHide": true
-              },
-              "8c5207d8-7103-4dc2-db48-d61c0c8c61fd": {
-                "sizeX": 120,
-                "sizeY": 17,
-                "row": 45,
-                "col": 0
               }
             },
             "gridSettings": {
@@ -1424,5 +1275,5 @@
       "dashboardCss": ".tb-widget-container > .tb-widget {\n    border: 1px solid rgba(0, 0, 0, 0.05);\n    box-shadow: 0px 5px 16px rgba(0, 0, 0, 0.04);\n    border-radius: 12px;\n}\n\n.tb-widget-container > .tb-widget:not([style*=\"padding: 0\"]) {\n    padding: 16px !important;\n}\n\n.tb-card-title {\n    display: grid;\n}\n\n.tb-home-widget-title {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 14px;\n    line-height: 20px;\n    letter-spacing: 0.25px;\n    color: rgba(0, 0, 0, 0.54);\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n\n.tb-home-widget-link {\n    position: relative;\n    border-bottom: none;\n}\n\n.tb-home-widget-link:hover {\n    border-bottom: none;\n}\n\n.tb-home-widget-link:focus {\n    border-bottom: none;\n}\n\n.tb-home-widget-link::after {\n    content: 'arrow_forward';\n    display: inline-block;\n    transform: rotate(315deg);\n    font-family: 'Material Icons';\n    font-weight: normal;\n    font-style: normal;\n    font-size: 18px;\n    color: rgba(0, 0, 0, 0.12);\n    vertical-align: bottom;\n    margin-left: 6px;    \n}\n\n.tb-home-widget-link:hover::after {\n    color: inherit;\n}\n\n.tb-home-widget-info-icon {\n    color: rgba(0, 0, 0, 0.12);\n    font-size: 16px;\n    width: 16px;\n    height: 16px;\n    line-height: 15px;\n    vertical-align: middle;\n}\n\n.tb-widget-container > .tb-widget .tb-timewindow {\n    font-size: 14px;\n    line-height: 20px;\n    letter-spacing: 0.25px;\n    color: rgba(0, 0, 0, 0.54);\n    padding: 0;\n}\n\n.tb-widget-container > .tb-widget .tb-legend-keys .tb-legend-label {\n    cursor: pointer;\n    user-select: none;\n    font-weight: 400;\n    font-size: 14px;\n    line-height: 20px;\n    letter-spacing: 0.2px;\n    color: rgba(0, 0, 0, 0.54);\n}\n\n@media screen and (min-width: 960px) and (max-width: 1279px) {\n    .tb-widget-container > .tb-widget {\n        border-radius: 4px;\n    }\n    .tb-widget-container > .tb-widget:not([style*=\"padding: 0\"]) {\n        padding: 2px !important;\n    }\n    .tb-hide-md {\n        display: none;\n    }\n}\n\n@media screen and (min-width: 1280px) and (max-width: 1819px) {\n    .tb-widget-container > .tb-widget:not([style*=\"padding: 0\"]) {\n        padding: 8px !important;\n    }\n    .tb-hide-lg {\n        display: none;\n    }\n}\n\n@media screen and (min-width: 960px) and (max-width: 1819px) {\n    .tb-hide-md-lg {\n        display: none;\n    }\n\n    .tb-home-widget-title {\n        font-size: 12px;\n        line-height: 16px;\n    }\n    \n    .tb-widget-container > .tb-widget .tb-widget-title {\n        padding: 0;\n    }\n\n    .tb-widget-container > .tb-widget .tb-timewindow {\n        font-size: 12px;\n        line-height: 16px;\n        min-height: 24px;\n        padding: 0;\n    }\n\n    .tb-widget-container > .tb-widget .tb-timewindow .mat-mdc-icon-button.tb-mat-32 {\n        width: 24px;\n        height: 24px;\n        line-height: 24px;\n    }\n\n    .tb-widget-container > .tb-widget .tb-timewindow .mat-mdc-icon-button.tb-mat-32 .mat-icon {\n        width: 18px;\n        height: 18px;\n        font-size: 18px;\n    }\n    \n    .tb-widget-container > .tb-widget tb-legend {\n        padding-bottom: 0 !important;\n    }\n    \n    .tb-widget-container > .tb-widget .tb-legend-keys .tb-legend-label {\n        font-size: 11px;\n        line-height: 16px;\n        letter-spacing: 0.25px;\n    }\n}\n\n@media screen and (max-width: 959px), screen and (min-width: 1820px) {\n    .tb-hide-not-md-lg {\n        display: none;\n    }\n}\n"
     }
   },
-  "name": "Tenant Administrator Home Page"
+  "resources": []
 }
