@@ -177,11 +177,6 @@ public class DefaultSystemDataLoaderService implements SystemDataLoaderService {
     @Value("${security.jwt.tokenSigningKey:thingsboardDefaultSigningKey}")
     private String tokenSigningKey;
 
-    @Bean
-    protected BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     private ExecutorService tsCallBackExecutor;
 
     @PostConstruct

@@ -16,9 +16,11 @@
 package org.thingsboard.server.service.executors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.thingsboard.common.util.AbstractListeningExecutor;
 
+@Primary
 @Component
 public class DbCallbackExecutorService extends AbstractListeningExecutor {
 
