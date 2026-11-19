@@ -1,18 +1,6 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.server.edge;
 
 import com.google.protobuf.AbstractMessage;
@@ -26,6 +14,8 @@ import org.thingsboard.server.common.data.queue.ProcessingStrategyType;
 import org.thingsboard.server.common.data.queue.Queue;
 import org.thingsboard.server.common.data.queue.SubmitStrategy;
 import org.thingsboard.server.common.data.queue.SubmitStrategyType;
+import org.thingsboard.server.common.data.tenant.profile.DefaultTenantProfileConfiguration;
+import org.thingsboard.server.common.data.tenant.profile.TenantProfileData;
 import org.thingsboard.server.common.data.tenant.profile.TenantProfileQueueConfiguration;
 import org.thingsboard.server.dao.service.DaoSqlTest;
 import org.thingsboard.server.gen.edge.v1.QueueUpdateMsg;
@@ -37,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DaoSqlTest
 public class TenantProfileEdgeTest extends AbstractEdgeTest {
@@ -64,6 +55,24 @@ public class TenantProfileEdgeTest extends AbstractEdgeTest {
         Assert.assertEquals("Tenant Profile Edge Test", tenantProfileMsg.getName());
 
         doPost("/api/tenantProfile", originalTenantProfile, TenantProfile.class);
+        loginTenantAdmin();
+    }
+
+    @Test
+    public void testTenantProfileOfDifferentTenantNotSentToEdge() throws Exception {
+        loginSysAdmin();
+        TenantProfile otherTenantProfile = new TenantProfile();
+        otherTenantProfile.setName("Other Tenant Profile Edge Test");
+        otherTenantProfile.setProfileData(new TenantProfileData());
+        otherTenantProfile.getProfileData().setConfiguration(new DefaultTenantProfileConfiguration());
+        otherTenantProfile = doPost("/api/tenantProfile", otherTenantProfile, TenantProfile.class);
+
+        otherTenantProfile.setDescription("Updated other tenant profile");
+        edgeImitator.expectMessageAmount(1);
+        doPost("/api/tenantProfile", otherTenantProfile, TenantProfile.class);
+        Assert.assertFalse(edgeImitator.waitForMessages(2));
+
+        doDelete("/api/tenantProfile/" + otherTenantProfile.getUuidId()).andExpect(status().isOk());
         loginTenantAdmin();
     }
 
@@ -99,7 +108,7 @@ public class TenantProfileEdgeTest extends AbstractEdgeTest {
 
         loginTenantAdmin();
 
-        // 25 sync message
+        // 36 sync message
         // +1 isolated Queue
         edgeImitator.expectMessageAmount(SYNC_MESSAGE_COUNT + 1);
         doPost("/api/edge/sync/" + edge.getId());

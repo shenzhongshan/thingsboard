@@ -1,0 +1,334 @@
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Store } from '@ngrx/store';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { PageData } from '@shared/models/page/page-data';
+import { PageLink } from '@shared/models/page/page-link';
+import {
+  MpItemVersionQuery,
+  MpItemVersionQueryOptions,
+  MpItemVersionView
+} from '@shared/models/iot-hub/iot-hub-version.models';
+import { CreatorView } from '@shared/models/iot-hub/iot-hub-creator.models';
+import { DevicePackageEntityState, DevicePackageRequest, DevicePackageResult, IotHubInstalledItem, IotHubInstalledItemKeptEntities, InstallItemVersionResult, InstallPlan, InstallPlanResult, UpdateItemVersionResult, ItemPublishedVersionInfo } from '@shared/models/iot-hub/iot-hub-installed-item.models';
+import { ItemType, ItemTypeFilterInfo, WidgetCategory } from '@shared/models/iot-hub/iot-hub-item.models';
+import { InterceptorHttpParams } from '@core/interceptors/interceptor-http-params';
+import { InterceptorConfig } from '@core/interceptors/interceptor-config';
+import { AppState } from '@core/core.state';
+import { getCurrentAuthState } from '@core/auth/auth.selectors';
+import { ResolvedDeviceConnectivitySettings } from '@shared/models/settings.models';
+import { environment as env } from '@env/environment';
+
+export function tbVersionToInt(version: string): number {
+  const parts = version.replace(/[^0-9.]/g, '').split('.');
+  const major = parseInt(parts[0], 10) || 0;
+  const minor = parseInt(parts[1], 10) || 0;
+  const patch = parseInt(parts[2], 10) || 0;
+  return major * 100 + minor * 10 + patch;
+}
+
+// Inverse of tbVersionToInt — produces "{major}.{minor}" by default
+// and appends ".{patch}" when the patch component is non-zero so the
+// rendered version stays compact (e.g. 430 → "4.3", 421 → "4.2.1").
+export function tbVersionIntToString(version: number): string {
+  const major = Math.floor(version / 100);
+  const minor = Math.floor((version % 100) / 10);
+  const patch = version % 10;
+  return patch === 0 ? `${major}.${minor}` : `${major}.${minor}.${patch}`;
+}
+
+export function iotHubResourceUrl(baseUrl: string, path: string): string {
+  if (!path) {
+    return path;
+  }
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  return `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+}
+
+const PUBLISHED_VERSIONS_CHUNK_SIZE = 100;
+
+export interface IotHubRequestConfig {
+  ignoreLoading?: boolean;
+  ignoreErrors?: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class IotHubApiService {
+
+  constructor(
+    private http: HttpClient,
+    private store: Store<AppState>
+  ) {}
+
+  get baseUrl(): string {
+    return getCurrentAuthState(this.store)?.iotHubBaseUrl || '';
+  }
+
+  public resolveResourceUrl(path: string): string {
+    return iotHubResourceUrl(this.baseUrl, path);
+  }
+
+  public getPublishedVersions(query: MpItemVersionQuery, config?: IotHubRequestConfig): Observable<PageData<MpItemVersionView>> {
+    this.applyPlatformFilters(query.options);
+    return this.http.get<PageData<MpItemVersionView>>(
+      `${this.baseUrl}/api/versions/published${query.toQuery()}`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  /** What this platform can install: items of every edition, nothing built for a newer ThingsBoard. */
+  private platformScope(): { ceOnly: boolean; tbVersion: number } {
+    return { ceOnly: false, tbVersion: tbVersionToInt(env.tbVersion) };
+  }
+
+  /** Fills in the platform scope wherever the caller did not set it. */
+  private applyPlatformFilters(options: MpItemVersionQueryOptions): void {
+    const scope = this.platformScope();
+    options.tbVersion ??= scope.tbVersion;
+    options.ceOnly ??= scope.ceOnly;
+  }
+
+  private platformScopeParams(): string[] {
+    const scope = this.platformScope();
+    return [`ceOnly=${scope.ceOnly}`, `tbVersion=${scope.tbVersion}`];
+  }
+
+  public getFilterInfo(itemType: ItemType, config?: IotHubRequestConfig): Observable<ItemTypeFilterInfo> {
+    const url = `${this.baseUrl}/api/item-listing/filterInfo/${itemType}?${this.platformScopeParams().join('&')}`;
+    return this.http.get<ItemTypeFilterInfo>(url, { params: this.buildParams(config) });
+  }
+
+  public getWidgetCategories(textSearch?: string, scadaFirst?: boolean, creatorVerified?: boolean,
+                             config?: IotHubRequestConfig): Observable<WidgetCategory[]> {
+    const queryParams: string[] = this.platformScopeParams();
+    if (textSearch?.trim()) {
+      queryParams.push(`textSearch=${encodeURIComponent(textSearch.trim())}`);
+    }
+    if (scadaFirst != null) {
+      queryParams.push(`scadaFirst=${scadaFirst}`);
+    }
+    if (creatorVerified) {
+      queryParams.push(`creatorVerified=true`);
+    }
+    const url = `${this.baseUrl}/api/item-listing/widgetCategories?${queryParams.join('&')}`;
+    return this.http.get<WidgetCategory[]>(url, { params: this.buildParams(config) });
+  }
+
+  public getVersionInfo(versionId: string, config?: IotHubRequestConfig): Observable<MpItemVersionView> {
+    return this.http.get<MpItemVersionView>(
+      `${this.baseUrl}/api/versions/${versionId}`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public getPublishedVersion(itemId: string, config?: IotHubRequestConfig): Observable<MpItemVersionView> {
+    return this.http.get<MpItemVersionView>(
+      `${this.baseUrl}/api/items/${itemId}/published`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  /**
+   * Resolves the listing item-version that matches the caller's edition
+   * and platform version.
+   *
+   * Backend: GET /api/listings/public/by-slug/{slug}/item-version
+   *
+   * On success → 200 with `MpItemVersionView`.
+   * On miss   → 404 with a `ListingItemVersionNotFound` body shape
+   *             (`noMatchingVersions`, `peRequired`, or
+   *             `minTbVersionRequired`). Callers should inspect
+   *             `HttpErrorResponse.error` to differentiate.
+   */
+  public getListingItemVersion(slug: string, config?: IotHubRequestConfig): Observable<MpItemVersionView> {
+    const queryParams = [
+      'ce=false',
+      `tbVersion=${this.platformScope().tbVersion}`
+    ];
+    return this.http.get<MpItemVersionView>(
+      `${this.baseUrl}/api/listings/public/by-slug/${encodeURIComponent(slug)}/item-version?${queryParams.join('&')}`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public getVersionReadme(versionId: string, config?: IotHubRequestConfig): Observable<string> {
+    return this.http.get(`${this.baseUrl}/api/versions/${versionId}/readme`, {
+      params: this.buildParams(config),
+      responseType: 'text'
+    });
+  }
+
+  public getVersionFileData(versionId: string, config?: IotHubRequestConfig): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/versions/${versionId}/fileData`, {
+      params: this.buildParams(config),
+      responseType: 'blob'
+    });
+  }
+
+  public getConnectivitySettings(config?: IotHubRequestConfig): Observable<ResolvedDeviceConnectivitySettings> {
+    return this.http.get<ResolvedDeviceConnectivitySettings>(
+      `/api/iot-hub/connectivity`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public installItemVersion(versionId: string, config?: IotHubRequestConfig, data?: any): Observable<InstallItemVersionResult> {
+    return this.http.post<InstallItemVersionResult>(
+      `/api/iot-hub/versions/${versionId}/install`,
+      data || null,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public resolveInstallPlan(versionId: string, config?: IotHubRequestConfig): Observable<InstallPlan> {
+    return this.http.get<InstallPlan>(
+      `/api/iot-hub/versions/${versionId}/installPlan`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public installPlan(plan: InstallPlan, data?: any, config?: IotHubRequestConfig): Observable<InstallPlanResult> {
+    return this.http.post<InstallPlanResult>(
+      `/api/iot-hub/installPlan`,
+      { plan, data: data ?? null },
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public updateItemVersion(installedItemId: string, versionId: string, config?: IotHubRequestConfig, force?: boolean): Observable<UpdateItemVersionResult> {
+    let params = this.buildParams(config);
+    if (force) {
+      params = params.set('force', 'true');
+    }
+    return this.http.post<UpdateItemVersionResult>(
+      `/api/iot-hub/installedItems/${installedItemId}/update/${versionId}`,
+      null,
+      { params }
+    );
+  }
+
+  public getInstalledItemIds(config?: IotHubRequestConfig): Observable<string[]> {
+    return this.http.get<string[]>(
+      `/api/iot-hub/installedItems/itemIds`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public getInstalledItemCounts(itemType: string, config?: IotHubRequestConfig): Observable<Record<string, number>> {
+    return this.http.get<Record<string, number>>(
+      `/api/iot-hub/installedItems/counts?itemType=${itemType}`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public getInstalledItems(pageLink: PageLink, itemTypes?: string | string[],
+                           itemId?: string, config?: IotHubRequestConfig): Observable<PageData<IotHubInstalledItem>> {
+    let query = this.installedItemsQuery(pageLink, itemTypes);
+    if (itemId) {
+      query += `&itemId=${itemId}`;
+    }
+    return this.http.get<PageData<IotHubInstalledItem>>(
+      `/api/iot-hub/installedItems${query}`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  /** Body: published version id by item id; returns items installed in a different version. */
+  public getInstalledItemsWithUpdates(pageLink: PageLink, itemTypes: string[] | null, publishedVersionIds: Record<string, string>,
+                                      config?: IotHubRequestConfig): Observable<PageData<IotHubInstalledItem>> {
+    return this.http.post<PageData<IotHubInstalledItem>>(
+      `/api/iot-hub/installedItems/withUpdates${this.installedItemsQuery(pageLink, itemTypes)}`,
+      publishedVersionIds,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public getInstalledItemsCount(itemType?: string, config?: IotHubRequestConfig): Observable<number> {
+    let url = '/api/iot-hub/installedItems/count';
+    if (itemType) {
+      url += `?itemType=${itemType}`;
+    }
+    return this.http.get<number>(url, { params: this.buildParams(config) });
+  }
+
+  public deleteInstalledItem(installedItemId: string, config?: IotHubRequestConfig): Observable<void> {
+    return this.http.delete<void>(
+      `/api/iot-hub/installedItems/${installedItemId}`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  /** The entities of an installed device package as they are now: whether they exist, changed since, or are shared. */
+  public checkDeviceUpdate(installedItemId: string, config?: IotHubRequestConfig): Observable<DevicePackageEntityState[]> {
+    return this.http.get<DevicePackageEntityState[]>(
+      `/api/iot-hub/installedItems/${installedItemId}/deviceUpdate/check`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  /** Applies a device package update in one transaction: all of it, or nothing. */
+  public updateDevicePackage(installedItemId: string, request: DevicePackageRequest, config?: IotHubRequestConfig): Observable<DevicePackageResult> {
+    return this.http.post<DevicePackageResult>(
+      `/api/iot-hub/installedItems/${installedItemId}/deviceUpdate`,
+      request,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  /** Installs a device package in one transaction: all of its entities and the installed item, or nothing. */
+  public installDevicePackage(request: DevicePackageRequest, config?: IotHubRequestConfig): Observable<DevicePackageResult> {
+    return this.http.post<DevicePackageResult>(
+      `/api/iot-hub/device/install`,
+      request,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public getInstalledItemKeptEntities(installedItemId: string, config?: IotHubRequestConfig): Observable<IotHubInstalledItemKeptEntities> {
+    return this.http.get<IotHubInstalledItemKeptEntities>(
+      `/api/iot-hub/installedItems/${installedItemId}/keptEntities`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  public getItemsPublishedVersions(itemIds: string[], config?: IotHubRequestConfig): Observable<ItemPublishedVersionInfo[]> {
+    if (!itemIds.length) {
+      return of([]);
+    }
+    const chunks: string[][] = [];
+    for (let i = 0; i < itemIds.length; i += PUBLISHED_VERSIONS_CHUNK_SIZE) {
+      chunks.push(itemIds.slice(i, i + PUBLISHED_VERSIONS_CHUNK_SIZE));
+    }
+    return forkJoin(chunks.map(chunk => this.http.post<ItemPublishedVersionInfo[]>(
+      `${this.baseUrl}/api/versions/publishedVersions`,
+      chunk,
+      { params: this.buildParams(config) }
+    ))).pipe(map(results => results.flat()));
+  }
+
+  public getCreatorProfile(creatorId: string, config?: IotHubRequestConfig): Observable<CreatorView> {
+    return this.http.get<CreatorView>(
+      `${this.baseUrl}/api/creators/${creatorId}/profile`,
+      { params: this.buildParams(config) }
+    );
+  }
+
+  private installedItemsQuery(pageLink: PageLink, itemTypes?: string | string[] | null): string {
+    const types = !itemTypes ? [] : Array.isArray(itemTypes) ? itemTypes : [itemTypes];
+    return pageLink.toQuery() + types.map(t => `&itemTypes=${t}`).join('');
+  }
+
+  private buildParams(config?: IotHubRequestConfig): HttpParams {
+    return new InterceptorHttpParams(
+      new InterceptorConfig(config?.ignoreLoading ?? false, config?.ignoreErrors ?? false)
+    );
+  }
+}

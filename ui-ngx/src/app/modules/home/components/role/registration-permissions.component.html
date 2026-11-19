@@ -1,0 +1,13 @@
+<!--
+
+    SPDX-FileCopyrightText: Copyright ThingsBoard, Inc.
+    SPDX-License-Identifier: BUSL-1.1
+
+-->
+<tb-group-permissions
+  class="flex-1 py-2 gt-sm:py-4"
+  [registrationPermissions]="registrationPermissions"
+  [active]="true"
+  [readonly]="disabled"
+  (permissionsChanged)="registrationPermissionsChanged()">
+</tb-group-permissions>

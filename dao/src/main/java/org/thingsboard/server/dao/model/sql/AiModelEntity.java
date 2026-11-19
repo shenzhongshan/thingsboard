@@ -1,28 +1,17 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.server.dao.model.sql;
 
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.type.PostgreSQLJsonPGObjectJsonbType;
 import org.hibernate.proxy.HibernateProxy;
 import org.thingsboard.server.common.data.ai.AiModel;
 import org.thingsboard.server.common.data.ai.model.AiModelConfig;
@@ -30,6 +19,7 @@ import org.thingsboard.server.common.data.id.AiModelId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.dao.model.BaseVersionedEntity;
 import org.thingsboard.server.dao.model.ModelConstants;
+import org.thingsboard.server.dao.util.mapping.AiModelConfigConverter;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -62,9 +52,13 @@ public class AiModelEntity extends BaseVersionedEntity<AiModel> {
     @Column(name = ModelConstants.AI_MODEL_NAME_COLUMN_NAME, nullable = false)
     private String name;
 
-    @Type(JsonBinaryType.class)
+    @Convert(converter = AiModelConfigConverter.class)
+    @JdbcType(PostgreSQLJsonPGObjectJsonbType.class)
     @Column(name = ModelConstants.AI_MODEL_CONFIGURATION_COLUMN_NAME, nullable = false, columnDefinition = "JSONB")
     private AiModelConfig configuration;
+
+    @Column(name = ModelConstants.AI_MODEL_CUSTOMER_ACCESS_ENABLED_COLUMN_NAME, nullable = false)
+    private boolean customerAccessEnabled;
 
     @Column(name = ModelConstants.EXTERNAL_ID_PROPERTY, columnDefinition = "UUID")
     private UUID externalId;
@@ -76,6 +70,7 @@ public class AiModelEntity extends BaseVersionedEntity<AiModel> {
         tenantId = getTenantUuid(aiModel.getTenantId());
         name = aiModel.getName();
         configuration = aiModel.getConfiguration();
+        customerAccessEnabled = aiModel.isCustomerAccessEnabled();
         externalId = getUuid(aiModel.getExternalId());
     }
 
@@ -87,6 +82,7 @@ public class AiModelEntity extends BaseVersionedEntity<AiModel> {
         model.setTenantId(TenantId.fromUUID(tenantId));
         model.setName(name);
         model.setConfiguration(configuration);
+        model.setCustomerAccessEnabled(customerAccessEnabled);
         model.setExternalId(getEntityId(externalId, AiModelId::new));
         return model;
     }

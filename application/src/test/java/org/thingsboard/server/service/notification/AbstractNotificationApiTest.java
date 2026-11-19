@@ -1,18 +1,6 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.server.service.notification;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -38,6 +26,7 @@ import org.thingsboard.server.common.data.notification.rule.DefaultNotificationR
 import org.thingsboard.server.common.data.notification.rule.NotificationRule;
 import org.thingsboard.server.common.data.notification.rule.NotificationRuleInfo;
 import org.thingsboard.server.common.data.notification.rule.trigger.config.NotificationRuleTriggerConfig;
+import org.thingsboard.server.common.data.notification.rule.trigger.config.NotificationRuleTriggerType;
 import org.thingsboard.server.common.data.notification.settings.NotificationDeliveryMethodConfig;
 import org.thingsboard.server.common.data.notification.settings.NotificationSettings;
 import org.thingsboard.server.common.data.notification.template.NotificationTemplate;
@@ -46,21 +35,26 @@ import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.security.Authority;
 import org.thingsboard.server.controller.AbstractControllerTest;
 import org.thingsboard.server.dao.DaoUtil;
+import org.thingsboard.server.dao.encryptionkey.EncryptionService;
 import org.thingsboard.server.dao.notification.DefaultNotifications;
 import org.thingsboard.server.dao.notification.NotificationRequestService;
 import org.thingsboard.server.dao.notification.NotificationRuleService;
 import org.thingsboard.server.dao.notification.NotificationSettingsService;
 import org.thingsboard.server.dao.notification.NotificationTargetService;
 import org.thingsboard.server.dao.notification.NotificationTemplateService;
+import org.thingsboard.server.dao.secret.SecretService;
 import org.thingsboard.server.dao.sqlts.insert.sql.SqlPartitioningRepository;
+import org.thingsboard.server.service.notification.rule.cache.DefaultNotificationRulesCache;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class AbstractNotificationApiTest extends AbstractControllerTest {
@@ -74,6 +68,8 @@ public abstract class AbstractNotificationApiTest extends AbstractControllerTest
     @Autowired
     protected NotificationRuleService notificationRuleService;
     @Autowired
+    protected DefaultNotificationRulesCache notificationRulesCache;
+    @Autowired
     protected NotificationTemplateService notificationTemplateService;
     @Autowired
     protected NotificationTargetService notificationTargetService;
@@ -85,6 +81,10 @@ public abstract class AbstractNotificationApiTest extends AbstractControllerTest
     protected SqlPartitioningRepository partitioningRepository;
     @Autowired
     protected DefaultNotifications defaultNotifications;
+    @Autowired
+    protected SecretService secretService;
+    @Autowired
+    protected EncryptionService encryptionService;
 
     public static final String DEFAULT_NOTIFICATION_SUBJECT = "Just a test";
     public static final NotificationType DEFAULT_NOTIFICATION_TYPE = NotificationType.GENERAL;
@@ -97,6 +97,8 @@ public abstract class AbstractNotificationApiTest extends AbstractControllerTest
         notificationTargetService.deleteNotificationTargetsByTenantId(TenantId.SYS_TENANT_ID);
         partitioningRepository.cleanupPartitionsCache("notification", Long.MAX_VALUE, 0);
         notificationSettingsService.deleteNotificationSettings(TenantId.SYS_TENANT_ID);
+        secretService.deleteByTenantId(TenantId.SYS_TENANT_ID);
+        encryptionService.deleteEncryptionKeyByTenantId(TenantId.SYS_TENANT_ID);
     }
 
     protected NotificationRequest submitNotificationRequest(NotificationTargetId targetId, String text, NotificationDeliveryMethod... deliveryMethods) {
@@ -155,7 +157,7 @@ public abstract class AbstractNotificationApiTest extends AbstractControllerTest
         User user = new User();
         user.setTenantId(tenantId);
         user.setAuthority(authority);
-        user.setEmail(RandomStringUtils.randomAlphabetic(20) + "@thingsboard.com");
+        user.setEmail(RandomStringUtils.secure().nextAlphabetic(20) + "@thingsboard.com");
         user = createUserAndLogin(user, "12345678");
         NotificationApiWsClient wsClient = buildAndConnectWebSocketClient();
         return Pair.of(user, wsClient);
@@ -196,17 +198,26 @@ public abstract class AbstractNotificationApiTest extends AbstractControllerTest
     }
 
     protected NotificationRule saveNotificationRule(NotificationRule notificationRule) {
-        return doPost("/api/notification/rule", notificationRule, NotificationRule.class);
+        NotificationRule savedRule = doPost("/api/notification/rule", notificationRule, NotificationRule.class);
+        awaitNotificationRulesCacheUpdate(savedRule.getTenantId(), savedRule.getTriggerType());
+        return savedRule;
+    }
+
+    // saving a rule evicts the rules cache asynchronously
+    protected void awaitNotificationRulesCacheUpdate(TenantId tenantId, NotificationRuleTriggerType triggerType) {
+        await().atMost(TIMEOUT, TimeUnit.SECONDS).pollInterval(10, TimeUnit.MILLISECONDS)
+                .until(() -> Set.copyOf(notificationRulesCache.getEnabled(tenantId, triggerType))
+                        .equals(Set.copyOf(notificationRuleService.findEnabledNotificationRulesByTenantIdAndTriggerType(tenantId, triggerType))));
     }
 
     protected PageData<NotificationRuleInfo> findNotificationRules() throws Exception {
         PageLink pageLink = new PageLink(10);
-        return doGetTypedWithPageLink("/api/notification/rules?", new TypeReference<PageData<NotificationRuleInfo>>() {}, pageLink);
+        return doGetTypedWithPageLink("/api/notification/rules?", new TypeReference<>() {}, pageLink);
     }
 
     @Override
     protected NotificationApiWsClient buildAndConnectWebSocketClient() throws URISyntaxException, InterruptedException {
-        NotificationApiWsClient wsClient = new NotificationApiWsClient(WS_URL + wsPort);
+        NotificationApiWsClient wsClient = new NotificationApiWsClient(WS_URL + serverPort);
         assertThat(wsClient.connectBlocking(TIMEOUT, TimeUnit.SECONDS)).isTrue();
         wsClient.authenticate(token);
         return wsClient;

@@ -1,19 +1,6 @@
-///
-/// Copyright © 2016-2026 The Thingsboard Authors
-///
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///     http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
-
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 import {
   AlarmAction,
   AlarmActionTranslationMap,
@@ -23,6 +10,7 @@ import {
   ComponentLifecycleEventTranslationMap,
   DeviceEvent,
   DeviceEventTranslationMap,
+  isSysAdminNotificationType,
   NotificationRule,
   NotificationTarget,
   TriggerType,
@@ -68,12 +56,14 @@ import {
 } from '@shared/models/api-usage.models';
 import { LimitedApi, LimitedApiTranslationMap } from '@shared/models/limited-api.models';
 import { StringItemsOption } from '@shared/components/string-items-list.component';
+import { IntegrationType, integrationTypeInfoMap } from '@shared/models/integration.models';
 import { EdgeConnectionEvent, EdgeConnectionEventTranslationMap } from '@shared/models/edge.models';
 
 export interface RuleNotificationDialogData {
   rule?: NotificationRule;
   isAdd?: boolean;
   isCopy?: boolean;
+  readonly?: boolean;
 }
 
 @Component({
@@ -98,6 +88,7 @@ export class RuleNotificationDialogComponent extends
   ruleEngineEventsTemplateForm: FormGroup;
   entitiesLimitTemplateForm: FormGroup;
   apiUsageLimitTemplateForm: FormGroup;
+  integrationEventsTemplateForm: FormGroup;
   newPlatformVersionTemplateForm: FormGroup;
   rateLimitsTemplateForm: FormGroup;
   edgeCommunicationFailureTemplateForm: FormGroup;
@@ -143,6 +134,9 @@ export class RuleNotificationDialogComponent extends
 
   limitedApis: StringItemsOption[];
 
+  integrationTypes: IntegrationType[] = Object.values(IntegrationType);
+  integrationTypeInfoMap = integrationTypeInfoMap;
+
   entityType = EntityType;
   isAdd = true;
 
@@ -152,7 +146,12 @@ export class RuleNotificationDialogComponent extends
     EntityType.CUSTOMER,
     EntityType.USER,
     EntityType.DASHBOARD,
-    EntityType.RULE_CHAIN
+    EntityType.RULE_CHAIN,
+    EntityType.INTEGRATION,
+    EntityType.CONVERTER,
+    EntityType.SCHEDULER_EVENT,
+    EntityType.AGENT,
+    EntityType.AGENT_APPLICATION
   ];
 
   selectedIndex = 0;
@@ -328,6 +327,28 @@ export class RuleNotificationDialogComponent extends
       })
     });
 
+    this.integrationEventsTemplateForm = this.fb.group({
+      triggerConfig: this.fb.group({
+        filterByIntegration: [false],
+        integrationTypes: [[]],
+        integrations: [{value: null, disabled: true}],
+        notifyOn: [[ComponentLifecycleEvent.STOPPED], Validators.required],
+        onlyOnError: [false]
+      })
+    });
+
+    this.integrationEventsTemplateForm.get('triggerConfig.filterByIntegration').valueChanges.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(value => {
+      if (value) {
+        this.integrationEventsTemplateForm.get('triggerConfig.integrations').enable({emitEvent: false});
+        this.integrationEventsTemplateForm.get('triggerConfig.integrationTypes').disable({emitEvent: false});
+      } else {
+        this.integrationEventsTemplateForm.get('triggerConfig.integrationTypes').enable({emitEvent: false});
+        this.integrationEventsTemplateForm.get('triggerConfig.integrations').disable({emitEvent: false});
+      }
+    });
+
     this.newPlatformVersionTemplateForm = this.fb.group({
       triggerConfig: this.fb.group({
 
@@ -363,6 +384,7 @@ export class RuleNotificationDialogComponent extends
       [TriggerType.RULE_ENGINE_COMPONENT_LIFECYCLE_EVENT, this.ruleEngineEventsTemplateForm],
       [TriggerType.ENTITIES_LIMIT, this.entitiesLimitTemplateForm],
       [TriggerType.API_USAGE_LIMIT, this.apiUsageLimitTemplateForm],
+      [TriggerType.INTEGRATION_LIFECYCLE_EVENT, this.integrationEventsTemplateForm],
       [TriggerType.NEW_PLATFORM_VERSION, this.newPlatformVersionTemplateForm],
       [TriggerType.RATE_LIMITS, this.rateLimitsTemplateForm],
       [TriggerType.EDGE_COMMUNICATION_FAILURE, this.edgeCommunicationFailureTemplateForm],
@@ -399,6 +421,16 @@ export class RuleNotificationDialogComponent extends
         this.resourceUsageShortageTemplateForm.get('triggerConfig.ramThreshold').patchValue(this.ruleNotification.triggerConfig.ramThreshold * 100, {emitEvent: false});
         this.resourceUsageShortageTemplateForm.get('triggerConfig.storageThreshold').patchValue(this.ruleNotification.triggerConfig.storageThreshold * 100, {emitEvent: false});
       }
+      if (this.ruleNotification.triggerType === TriggerType.INTEGRATION_LIFECYCLE_EVENT) {
+        this.integrationEventsTemplateForm.get('triggerConfig.filterByIntegration')
+          .patchValue(!!this.ruleNotification.triggerConfig.integrations, {onlySelf: true});
+      }
+    }
+
+    if(data?.readonly) {
+      this.dialogTitle = 'notification.view-rule';
+      this.ruleNotificationForm.disable({emitEvent: false});
+      Array.from(this.triggerTypeFormsMap.values()).map(form => form.disable({emitEvent: false}));
     }
   }
 
@@ -434,7 +466,7 @@ export class RuleNotificationDialogComponent extends
     return 'action.next';
   }
 
-  private get maxStepperIndex(): number {
+  get maxStepperIndex(): number {
     return this.addNotificationRule?._steps?.length - 1;
   }
 
@@ -454,6 +486,9 @@ export class RuleNotificationDialogComponent extends
         formValue.triggerConfig.cpuThreshold = formValue.triggerConfig.cpuThreshold / 100;
         formValue.triggerConfig.ramThreshold = formValue.triggerConfig.ramThreshold / 100;
         formValue.triggerConfig.storageThreshold = formValue.triggerConfig.storageThreshold / 100;
+      }
+      if (triggerType === TriggerType.INTEGRATION_LIFECYCLE_EVENT) {
+        delete formValue.triggerConfig.filterByIntegration;
       }
       formValue.recipientsConfig.triggerType = triggerType;
       formValue.triggerConfig.triggerType = triggerType;
@@ -518,19 +553,8 @@ export class RuleNotificationDialogComponent extends
   }
 
   private allowTriggerTypes(): TriggerType[] {
-    const sysAdminAllowTriggerTypes = new Set([
-      TriggerType.ENTITIES_LIMIT,
-      TriggerType.API_USAGE_LIMIT,
-      TriggerType.NEW_PLATFORM_VERSION,
-      TriggerType.RATE_LIMITS,
-      TriggerType.TASK_PROCESSING_FAILURE,
-      TriggerType.RESOURCES_SHORTAGE
-    ]);
-
-    if (this.isSysAdmin()) {
-      return Array.from(sysAdminAllowTriggerTypes);
-    }
-    return Object.values(TriggerType).filter(type => !sysAdminAllowTriggerTypes.has(type));
+    const isSysAdmin = this.isSysAdmin();
+    return Object.values(TriggerType).filter(type => isSysAdminNotificationType(type) === isSysAdmin);
   }
 
   get allowEntityTypeForEntityAction(): EntityType[] {
@@ -542,7 +566,12 @@ export class RuleNotificationDialogComponent extends
         EntityType.QUEUE,
         EntityType.NOTIFICATION,
         EntityType.NOTIFICATION_REQUEST,
-        EntityType.WIDGET_TYPE
+        EntityType.WIDGET_TYPE,
+        EntityType.GROUP_PERMISSION,
+        EntityType.AGENT_APPLICATION,
+        EntityType.AGENT_APP_EVENT,
+        EntityType.AGENT_APP_UNIT,
+        EntityType.AGENT_BULK_ACTION
       ]);
       this._allowEntityTypeForEntityAction = Object.values(EntityType).filter(type => !excludeEntityType.has(type));
     }

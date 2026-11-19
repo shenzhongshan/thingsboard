@@ -1,23 +1,13 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.server.cache;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.redis.connection.RedisConnection;
+import redis.clients.jedis.exceptions.JedisNoScriptException;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -40,6 +30,16 @@ public class RedisTbCacheTransaction<K extends Serializable, V extends Serializa
             var execResult = connection.exec();
             var result = execResult != null && execResult.stream().anyMatch(Objects::nonNull);
             return result;
+        } catch (InvalidDataAccessApiUsageException e) {
+            if (!(e.getCause() instanceof JedisNoScriptException)) {
+                throw e;
+            }
+            // The node has not loaded the script yet, e.g. a replica that a failover just promoted, and a script
+            // queued in MULTI cannot fall back to loading it. Load it now so the next transaction on this node works;
+            // this one is not applied, like a transaction aborted by WATCH.
+            log.debug("[{}] Transaction failed with NOSCRIPT, loading the cache scripts on the node", cache.getCacheName());
+            cache.loadScripts(connection);
+            return false;
         } finally {
             connection.close();
         }

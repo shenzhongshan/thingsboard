@@ -1,18 +1,6 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.server.dao;
 
 import com.github.dockerjava.api.command.InspectContainerResponse;
@@ -20,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.junit.ClassRule;
 import org.junit.rules.ExternalResource;
-import org.testcontainers.containers.CassandraContainer;
-import org.testcontainers.containers.delegate.CassandraDatabaseDelegate;
+import org.testcontainers.cassandra.CassandraContainer;
+import org.testcontainers.cassandra.CassandraDatabaseDelegate;
 import org.testcontainers.delegate.DatabaseDelegate;
 import org.testcontainers.ext.ScriptUtils;
 
@@ -40,7 +28,6 @@ public abstract class AbstractNoSqlContainer {
             "cassandra/schema-ts-latest.cql"
     );
 
-    @ClassRule(order = 0)
     public static final CassandraContainer cassandra = (CassandraContainer) new CassandraContainer("cassandra:5.0") {
         @Override
         protected void containerIsStarted(InspectContainerResponse containerInfo) {
@@ -74,7 +61,7 @@ public abstract class AbstractNoSqlContainer {
             .withEnv("MAX_HEAP_SIZE", "512M")
             .withEnv("CASSANDRA_CLUSTER_NAME", "ThingsBoard Cluster");
 
-    @ClassRule(order = 1)
+    @ClassRule(order = 0)
     public static ExternalResource resource = new ExternalResource() {
         @Override
         protected void before() throws Throwable {

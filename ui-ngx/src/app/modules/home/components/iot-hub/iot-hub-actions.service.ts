@@ -1,0 +1,236 @@
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
+import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Observable, of, EMPTY } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { DialogService } from '@core/services/dialog.service';
+import { MpItemVersionView } from '@shared/models/iot-hub/iot-hub-version.models';
+import { ItemType } from '@shared/models/iot-hub/iot-hub-item.models';
+import { DeviceInstalledItemDescriptor, IotHubInstalledItem, IotHubInstalledItemKeptEntities } from '@shared/models/iot-hub/iot-hub-installed-item.models';
+import { IotHubApiService } from '@core/http/iot-hub-api.service';
+import { EntityId } from '@shared/models/id/entity-id';
+import { TbIotHubAddItemDialogComponent, IotHubAddItemDialogData, IotHubAddItemDialogResult } from './iot-hub-add-item-dialog.component';
+import { TbIotHubItemDetailDialogComponent, IotHubItemDetailDialogData, IotHubItemDetailDialogMode } from './iot-hub-item-detail-dialog.component';
+import { TbIotHubInstallDialogComponent, IotHubInstallDialogData } from './iot-hub-install-dialog.component';
+import { TbIotHubUpdateDialogComponent, IotHubUpdateDialogData } from './iot-hub-update-dialog.component';
+import { TbIotHubDeleteDialogComponent, IotHubDeleteDialogData } from './iot-hub-delete-dialog.component';
+import { TbDeviceInstallDialogComponent, DeviceInstallDialogData, DeviceInstallUpdate } from './device-install-dialog/device-install-dialog.component';
+import { TbIotHubInstalledItemsDialogComponent, IotHubInstalledItemsDialogData } from './iot-hub-installed-items-dialog.component';
+import { IotHubBuiltInService } from './iot-hub-built-in.service';
+import { isBuiltInItem } from './iot-hub-utils';
+
+/**
+ * What `openBuiltInOrConfirmInstall` did with a built-in item: 'handled' means nothing is left to do
+ * (the local copy was opened, or the user was told why it could not be), while 'install-requested'
+ * means the component really is absent and the user asked for it to be installed.
+ */
+export type IotHubBuiltInAction = 'handled' | 'install-requested';
+
+@Injectable()
+export class IotHubActionsService {
+
+  constructor(
+    private dialog: MatDialog,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    private builtInService: IotHubBuiltInService,
+    private iotHubApiService: IotHubApiService
+  ) {}
+
+  openItemDetail(item: MpItemVersionView, installedItem?: IotHubInstalledItem, installedItemsCount?: number,
+                 mode?: IotHubItemDetailDialogMode, showCreator?: boolean, preview?: boolean): Observable<any> {
+    return this.dialog.open(TbIotHubItemDetailDialogComponent, {
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      disableClose: true,
+      autoFocus: false,
+      data: { item, installedItem, installedItemsCount, mode, showCreator, preview } as IotHubItemDetailDialogData
+    }).afterClosed();
+  }
+
+  openInstalledItems(item: MpItemVersionView): Observable<any> {
+    return this.dialog.open(TbIotHubInstalledItemsDialogComponent, {
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      disableClose: true,
+      autoFocus: false,
+      data: { item } as IotHubInstalledItemsDialogData
+    }).afterClosed();
+  }
+
+  addItem(itemType: ItemType, options?: { itemSubType?: string; entityId?: EntityId; entityGroupId?: string; customerId?: string }): Observable<IotHubAddItemDialogResult> {
+    return this.dialog.open(TbIotHubAddItemDialogComponent, {
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog-lt-md'],
+      disableClose: true,
+      autoFocus: false,
+      data: {
+        itemType,
+        itemSubType: options?.itemSubType,
+        entityId: options?.entityId,
+        entityGroupId: options?.entityGroupId,
+        customerId: options?.customerId
+      } as IotHubAddItemDialogData
+    }).afterClosed();
+  }
+
+  /**
+   * Runs the primary action of an item: built-in content is opened locally (never installed),
+   * device packages are connected, everything else goes through the install dialog.
+   */
+  installItem(item: MpItemVersionView): Observable<string> {
+    if (isBuiltInItem(item)) {
+      return this.openOrInstallBuiltIn(item);
+    }
+    return this.runInstall(item);
+  }
+
+  /** Opens the local copy of a built-in item, or asks to install it when it really is absent. */
+  openBuiltInOrConfirmInstall(item: MpItemVersionView): Observable<IotHubBuiltInAction> {
+    return this.builtInService.openLocalComponent(item).pipe(
+      switchMap(outcome => {
+        switch (outcome) {
+          case 'missing':
+            return this.confirmInstallMissingBuiltIn(item).pipe(
+              map((confirmed): IotHubBuiltInAction => confirmed ? 'install-requested' : 'handled')
+            );
+          case 'failed':
+            this.showBuiltInLookupFailed(item);
+            return of<IotHubBuiltInAction>('handled');
+          default:
+            // 'opened' or 'cancelled' — the component is in place either way, so never install.
+            return of<IotHubBuiltInAction>('handled');
+        }
+      })
+    );
+  }
+
+  /**
+   * Asks whether to install a built-in item whose local copy is gone — the component the Hub entry
+   * mirrors was deleted from this instance, so installing is the only way to get it back.
+   */
+  confirmInstallMissingBuiltIn(item: MpItemVersionView): Observable<boolean> {
+    return this.dialogService.confirm(
+      this.translate.instant('iot-hub.built-in-missing-title'),
+      this.translate.instant('iot-hub.built-in-missing-text', { name: item?.name }),
+      this.translate.instant('action.cancel'),
+      this.translate.instant('iot-hub.install')
+    );
+  }
+
+  /** Reports that the local copy could not be checked — nothing was opened and nothing installed. */
+  showBuiltInLookupFailed(item: MpItemVersionView): void {
+    this.dialogService.alert(
+      this.translate.instant('iot-hub.built-in-lookup-failed-title'),
+      this.translate.instant('iot-hub.built-in-lookup-failed-text', { name: item?.name })
+    );
+  }
+
+  private openOrInstallBuiltIn(item: MpItemVersionView): Observable<string> {
+    return this.openBuiltInOrConfirmInstall(item).pipe(
+      // The confirmation inside is the only one the user gets: install starts immediately,
+      // and opening the component is a separate click once it is back in the library.
+      switchMap(action => action === 'install-requested' ? this.runInstall(item, true) : EMPTY)
+    );
+  }
+
+  private runInstall(item: MpItemVersionView, skipConfirm = false): Observable<string> {
+    if (item.type === ItemType.DEVICE) {
+      return this.openDeviceInstallDialog(item);
+    }
+    return this.dialog.open(TbIotHubInstallDialogComponent, {
+      panelClass: ['tb-dialog'],
+      disableClose: true,
+      autoFocus: false,
+      data: { item, skipConfirm } as IotHubInstallDialogData
+    }).afterClosed();
+  }
+
+  updateItem(installedItem: IotHubInstalledItem, version: string, versionId: string): Observable<string | boolean> {
+    if (!installedItem) {
+      return of(false);
+    }
+    if (installedItem.itemType === ItemType.DEVICE) {
+      return this.updateDevice(installedItem, versionId);
+    }
+    return this.dialog.open<TbIotHubUpdateDialogComponent, IotHubUpdateDialogData, string | boolean>(TbIotHubUpdateDialogComponent, {
+      panelClass: ['tb-dialog'],
+      disableClose: true,
+      autoFocus: false,
+      data: {
+        installedItemId: installedItem.id.id,
+        itemName: installedItem.itemName,
+        itemType: installedItem.itemType as ItemType,
+        version,
+        versionId
+      }
+    }).afterClosed();
+  }
+
+  deleteItem(installedItem: IotHubInstalledItem): Observable<boolean> {
+    if (!installedItem) {
+      return of(false);
+    }
+    // A device package keeps some entities: the dialog opens with them already known
+    const keptEntities$: Observable<IotHubInstalledItemKeptEntities | null> = installedItem.itemType === 'DEVICE' ?
+      this.iotHubApiService.getInstalledItemKeptEntities(installedItem.id.id, {ignoreErrors: true}).pipe(catchError(() => of(null))) :
+      of(null);
+    return keptEntities$.pipe(
+      switchMap(keptEntities => this.dialog.open<TbIotHubDeleteDialogComponent, IotHubDeleteDialogData, boolean>(TbIotHubDeleteDialogComponent, {
+        panelClass: ['tb-dialog'],
+        disableClose: true,
+        autoFocus: false,
+        data: { installedItemId: installedItem.id.id, itemName: installedItem.itemName, itemType: installedItem.itemType, keptEntities }
+      }).afterClosed())
+    );
+  }
+
+  // Reached only for items whose action mode is 'connect', i.e. never for built-in content:
+  // that decision is made once, at the public entry points above.
+  installDevice(item: MpItemVersionView, options?: { entityGroupId?: string; customerId?: string }): Observable<string> {
+    return this.openDeviceInstallDialog(item, {
+      entityGroupId: options?.entityGroupId,
+      customerId: options?.customerId
+    });
+  }
+
+  reviewDevice(item: MpItemVersionView, deviceDescriptor: DeviceInstalledItemDescriptor): Observable<any> {
+    return this.openDeviceInstallDialog(item, {
+        reviewMode: true,
+        selectedInstallMethod: deviceDescriptor.selectedInstallMethod,
+        reviewed: deviceDescriptor
+      });
+  }
+
+  /**
+   * A device package is updated by the install wizard of the new version: its steps change what
+   * the package created in place, so the device and its history stay. When only texts changed,
+   * the wizard records the new version without opening.
+   */
+  private updateDevice(installedItem: IotHubInstalledItem, versionId: string): Observable<string | boolean> {
+    return this.iotHubApiService.getVersionInfo(versionId).pipe(
+      switchMap(item => this.openDeviceInstallDialog(item, {
+        update: {
+          installedItemId: installedItem.id.id,
+          descriptor: installedItem.descriptor as DeviceInstalledItemDescriptor,
+          fromVersionId: installedItem.itemVersionId,
+          fromVersion: installedItem.version
+        }
+      })),
+      map(result => result === 'installed' ? 'updated' : result),
+      // The request has already shown the error
+      catchError(() => of(false))
+    );
+  }
+
+  private openDeviceInstallDialog(item: MpItemVersionView,
+                                  options?: { reviewMode?: boolean; selectedInstallMethod?: string; reviewed?: DeviceInstalledItemDescriptor;
+                                  entityGroupId?: string; customerId?: string; update?: DeviceInstallUpdate}): Observable<any> {
+    return this.dialog.open<TbDeviceInstallDialogComponent, DeviceInstallDialogData>(TbDeviceInstallDialogComponent, {
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog-lt-md'],
+      disableClose: true,
+      autoFocus: false,
+      data: { item, ...options }
+    }).afterClosed();
+  }
+}

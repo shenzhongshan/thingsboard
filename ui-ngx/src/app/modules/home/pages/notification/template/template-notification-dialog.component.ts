@@ -1,20 +1,7 @@
-///
-/// Copyright © 2016-2026 The Thingsboard Authors
-///
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///     http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
-
-import { NotificationTemplate, NotificationType } from '@shared/models/notification.models';
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
+import { isSysAdminNotificationType, NotificationTemplate, NotificationType } from '@shared/models/notification.models';
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
@@ -31,9 +18,6 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MediaBreakpoints } from '@shared/models/constants';
 import { TranslateService } from '@ngx-translate/core';
 import { TemplateConfiguration } from '@home/pages/notification/template/template-configuration';
-import { getCurrentAuthUser } from '@core/auth/auth.selectors';
-import { AuthUser } from '@shared/models/user.model';
-import { Authority } from '@shared/models/authority.enum';
 
 export interface TemplateNotificationDialogData {
   template?: NotificationTemplate;
@@ -41,6 +25,7 @@ export interface TemplateNotificationDialogData {
   isAdd?: boolean;
   isCopy?: boolean;
   name?: string;
+  readonly?: boolean;
 }
 
 @Component({
@@ -66,7 +51,6 @@ export class TemplateNotificationDialogComponent
   notificationTemplateConfigurationForm: FormGroup;
 
   private readonly templateNotification: NotificationTemplate;
-  private authUser: AuthUser = getCurrentAuthUser(this.store);
 
   constructor(protected store: Store<AppState>,
               protected router: Router,
@@ -97,6 +81,12 @@ export class TemplateNotificationDialogComponent
     this.templateNotification = deepClone(this.data.template);
 
     if (this.templateNotification) {
+      if (this.isSysAdmin()) {
+        this.notificationTypes.push(
+          NotificationType.USER_REGISTERED,
+          NotificationType.USER_ACTIVATED
+        );
+      }
       if (this.data.isCopy) {
         this.templateNotification.name += ` (${this.translate.instant('action.copy')})`;
       } else {
@@ -108,6 +98,14 @@ export class TemplateNotificationDialogComponent
         deliveryMethodsTemplates: this.templateNotification.configuration.deliveryMethodsTemplates
       }, {emitEvent: false});
       this.deliveryConfiguration = this.templateNotificationForm.get('configuration.deliveryMethodsTemplates').value;
+    }
+
+    if(data?.readonly) {
+      this.dialogTitle = 'notification.view-notification-template';
+      this.templateNotificationForm.disable({emitEvent: false});
+    } else {
+      this.updateValidators();
+      this.updateAttachReportValidators();
     }
   }
 
@@ -147,7 +145,7 @@ export class TemplateNotificationDialogComponent
     return 'action.next';
   }
 
-  private get maxStepperIndex(): number {
+  get maxStepperIndex(): number {
     return this.notificationTemplateStepper?._steps?.length - 1;
   }
 
@@ -175,24 +173,10 @@ export class TemplateNotificationDialogComponent
     });
   }
 
-  private isSysAdmin(): boolean {
-    return this.authUser.authority === Authority.SYS_ADMIN;
-  }
-
   private allowNotificationType(): NotificationType[] {
-    const sysAdminAllowNotificationTypes = new Set([
-      NotificationType.ENTITIES_LIMIT,
-      NotificationType.ENTITIES_LIMIT_INCREASE_REQUEST,
-      NotificationType.API_USAGE_LIMIT,
-      NotificationType.NEW_PLATFORM_VERSION,
-      NotificationType.RATE_LIMITS,
-      NotificationType.TASK_PROCESSING_FAILURE,
-      NotificationType.RESOURCES_SHORTAGE
-    ]);
-
     if (this.isSysAdmin()) {
-      return [NotificationType.GENERAL, ...sysAdminAllowNotificationTypes];
+      return Object.values(NotificationType).filter(type => type === NotificationType.GENERAL || isSysAdminNotificationType(type));
     }
-    return Object.values(NotificationType).filter(type => !sysAdminAllowNotificationTypes.has(type));
+    return Object.values(NotificationType).filter(type => !isSysAdminNotificationType(type));
   }
 }

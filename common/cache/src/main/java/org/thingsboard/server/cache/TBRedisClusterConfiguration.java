@@ -1,18 +1,6 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.server.cache;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +11,8 @@ import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.thingsboard.server.common.data.StringUtils;
+
+import java.time.Duration;
 
 @Configuration
 @ConditionalOnMissingBean(TbCaffeineCacheConfiguration.class)
@@ -37,6 +27,9 @@ public class TBRedisClusterConfiguration extends TBRedisCacheConfiguration {
 
     @Value("${redis.cluster.useDefaultPoolConfig:true}")
     private boolean useDefaultPoolConfig;
+
+    @Value("${redis.cluster.topology-refresh-period-sec:30}")
+    private long topologyRefreshPeriodSec;
 
     @Value("${redis.username:}")
     private String username;
@@ -53,7 +46,8 @@ public class TBRedisClusterConfiguration extends TBRedisCacheConfiguration {
         clusterConfiguration.setMaxRedirects(maxRedirects);
         clusterConfiguration.setUsername(username);
         clusterConfiguration.setPassword(password);
-        return new JedisConnectionFactory(clusterConfiguration, buildClientConfig());
+        Duration topologyRefreshPeriod = topologyRefreshPeriodSec > 0 ? Duration.ofSeconds(topologyRefreshPeriodSec) : null;
+        return new TbJedisClusterConnectionFactory(clusterConfiguration, buildClientConfig(), topologyRefreshPeriod);
     }
 
     private JedisClientConfiguration buildClientConfig() {

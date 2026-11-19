@@ -1,24 +1,8 @@
-///
-/// Copyright © 2016-2026 The Thingsboard Authors
-///
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///     http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
-
-import type { Plugin, PluginBuild, OutputFile } from 'esbuild';
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-License-Identifier: Apache-2.0
+import type { Plugin, PluginBuild } from 'esbuild';
 import dirTree from 'directory-tree';
 import * as packageJson from '../package.json';
-import { gzip } from 'node:zlib';
-import * as path from 'node:path';
 
 const defineTbVariablesPlugin: Plugin = {
   name: 'tb-define-variables',
@@ -50,47 +34,6 @@ const resolveJQueryPlugin: Plugin = {
   }
 };
 
-const compressFileTypes = ['.js', '.css', '.html', '.svg', '.png', '.jpg', '.ttf', '.gif', '.woff', '.woff2', '.eot', '.json'];
-const compressThreshold = 10240;
-
-const compressorPlugin: Plugin = {
-  name: 'tb-compressor-plugin',
-  setup(build) {
-    build.onEnd(async result => {
-      if (!result.outputFiles || !isProduction()) return;
-      const outputExt = '.gz';
-      const gzippedFiles: OutputFile[] = [];
-      for (const file of result.outputFiles) {
-        if (!compressFileTypes.some((ext) => ext === path.extname(file.path))) continue;
-        if (file.contents.byteLength <= compressThreshold) continue;
-        const compressedContent = await gzipContent(file.contents);
-        const compressedFilePath = `${file.path}${outputExt}`;
-        gzippedFiles.push(
-          {
-            path: compressedFilePath,
-            hash: file.hash,
-            contents: new Uint8Array(compressedContent),
-            text: '',
-          }
-        );
-      }
-      result.outputFiles.push(...gzippedFiles);
-    });
-  },
-};
-
-async function gzipContent(content): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    gzip(content, (error, result) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-}
-
 function isProduction(): boolean {
   const configurationIndex = process.argv.indexOf('--configuration');
   let production = false;
@@ -101,4 +44,4 @@ function isProduction(): boolean {
   return production;
 }
 
-export default [defineTbVariablesPlugin, resolveJQueryPlugin, compressorPlugin];
+export default [defineTbVariablesPlugin, resolveJQueryPlugin];

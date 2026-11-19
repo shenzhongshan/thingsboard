@@ -1,23 +1,10 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.rule.engine.telemetry;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonParser;
 import org.thingsboard.common.util.JacksonUtil;
 import org.thingsboard.rule.engine.api.RuleNode;
 import org.thingsboard.rule.engine.api.TbContext;
@@ -142,7 +129,7 @@ public class TbMsgTimeseriesNode implements TbNode {
         }
 
         String src = msg.getData();
-        Map<Long, List<KvEntry>> tsKvMap = JsonConverter.convertToTelemetry(JsonParser.parseString(src), ts);
+        Map<Long, List<KvEntry>> tsKvMap = JsonConverter.telemetryFromMsg(msg, ts);
         if (tsKvMap.isEmpty()) {
             ctx.tellFailure(msg, new IllegalArgumentException("Msg body is empty: " + src));
             return;
@@ -153,6 +140,8 @@ public class TbMsgTimeseriesNode implements TbNode {
         if (ttl == 0L) {
             ttl = tenantProfileDefaultStorageTtl;
         }
+        String overwriteValueStr = msg.getMetaData().getValue("overwriteValue");
+        boolean overwriteValue = Boolean.parseBoolean(overwriteValueStr);
         ctx.getTelemetryService().saveTimeseries(TimeseriesSaveRequest.builder()
                 .tenantId(ctx.getTenantId())
                 .customerId(msg.getCustomerId())
@@ -160,6 +149,7 @@ public class TbMsgTimeseriesNode implements TbNode {
                 .entries(tsKvEntryList)
                 .ttl(ttl)
                 .strategy(strategy)
+                .overwriteValue(overwriteValue)
                 .previousCalculatedFieldIds(msg.getPreviousCalculatedFieldIds())
                 .tbMsgId(msg.getId())
                 .tbMsgType(msg.getInternalType())

@@ -1,24 +1,27 @@
+@REM
+@REM SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+@REM SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+@REM SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
+@REM
+
 @ECHO OFF
 
 setlocal ENABLEEXTENSIONS
 
 @ECHO Detecting Java version installed.
 :CHECK_JAVA
-for /f tokens^=2-5^ delims^=.-_^" %%j in ('java -fullversion 2^>^&1') do set "jver=%%j%%k"
+set "jver="
+set "jmajor=0"
+for /f tokens^=2^ delims^=.+-_^" %%j in ('java -fullversion 2^>^&1 ^| findstr /c:"full version"') do set "jver=%%j"
 @ECHO CurrentVersion %jver%
 
-if %jver% NEQ 250 GOTO JAVA_NOT_INSTALLED
+set /a jmajor=jver 2>nul
+if %jmajor% LSS ${pkg.minJavaVersion} GOTO JAVA_NOT_INSTALLED
 
 :JAVA_INSTALLED
 
-@ECHO Java 25 found!
+@ECHO Java %jmajor% found!
 @ECHO Installing thingsboard ...
-
-SET loadDemo=false
-
-if "%1" == "--loadDemo" (
-    SET loadDemo=true
-)
 
 SET BASE=%~dp0
 SET LOADER_PATH=%BASE%\conf,%BASE%\extensions
@@ -30,7 +33,6 @@ PUSHD "%BASE%\conf"
 
 java -cp "%jarfile%" -Dloader.main=org.thingsboard.server.ThingsboardInstallApplication^
                     -Dinstall.data_dir="%installDir%"^
-                    -Dinstall.load_demo=%loadDemo%^
                     -Dspring.jpa.hibernate.ddl-auto=none^
                     -Dinstall.upgrade=false^
                     -Dlogging.config="%BASE%\install\logback.xml"^
@@ -50,8 +52,8 @@ POPD
 GOTO END
 
 :JAVA_NOT_INSTALLED
-@ECHO Java 25 is not installed. Only Java 25 is supported
-@ECHO Please go to https://adoptopenjdk.net/index.html and install Java 25. Then retry installation.
+@ECHO Java ${pkg.minJavaVersion} or later is not installed. ThingsBoard requires Java ${pkg.minJavaVersion} or later.
+@ECHO Please go to https://adoptium.net/ and install Java ${pkg.minJavaVersion}. Then retry installation.
 PAUSE
 GOTO END
 

@@ -1,0 +1,138 @@
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
+package org.thingsboard.server.dao.sql.iot_hub;
+
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+import org.thingsboard.server.common.data.id.IotHubInstalledItemId;
+import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.iot_hub.IotHubInstalledItem;
+import org.thingsboard.server.common.data.page.PageData;
+import org.thingsboard.server.common.data.page.PageLink;
+import org.thingsboard.server.common.data.page.SortOrder;
+import org.thingsboard.server.dao.DaoUtil;
+import org.thingsboard.server.dao.iot_hub.IotHubInstalledItemDao;
+import org.thingsboard.server.dao.model.sql.IotHubInstalledItemEntity;
+import org.thingsboard.server.dao.sql.JpaAbstractDao;
+import org.thingsboard.server.dao.util.SqlDao;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+@SqlDao
+@Component
+@RequiredArgsConstructor
+class JpaIotHubInstalledItemDao extends JpaAbstractDao<IotHubInstalledItemEntity, IotHubInstalledItem> implements IotHubInstalledItemDao {
+
+    private final IotHubInstalledItemRepository repository;
+
+    @Override
+    public Optional<IotHubInstalledItem> findByTenantIdAndId(TenantId tenantId, IotHubInstalledItemId installedItemId) {
+        return repository.findByTenantIdAndId(tenantId.getId(), installedItemId.getId()).map(DaoUtil::getData);
+    }
+
+    @Override
+    public Optional<IotHubInstalledItem> findByTenantIdAndIdForUpdate(TenantId tenantId, IotHubInstalledItemId installedItemId) {
+        return repository.findByTenantIdAndIdForUpdate(tenantId.getId(), installedItemId.getId()).map(DaoUtil::getData);
+    }
+
+    @Override
+    public PageData<IotHubInstalledItem> findByTenantId(TenantId tenantId, List<String> itemTypes, UUID itemId, PageLink pageLink) {
+        return find(tenantId, itemTypes, itemId, null, pageLink);
+    }
+
+    @Override
+    public PageData<IotHubInstalledItem> findByTenantIdWithUpdates(TenantId tenantId, List<String> itemTypes,
+                                                                   Map<UUID, UUID> publishedVersionIds, PageLink pageLink) {
+        return find(tenantId, itemTypes, null, publishedVersionIds, pageLink);
+    }
+
+    // Never matches: the query binds the published ids even when it doesn't filter by them
+    private static final Set<UUID> NO_IDS = Set.of(new UUID(0, 0));
+
+    // One query for both lists, so the only-updates list filters and searches as the plain one does
+    private PageData<IotHubInstalledItem> find(TenantId tenantId, List<String> itemTypes, UUID itemId,
+                                               Map<UUID, UUID> publishedVersionIds, PageLink pageLink) {
+        boolean updatesOnly = publishedVersionIds != null;
+        return DaoUtil.toPageData(repository.findByTenantId(
+                tenantId.getId(),
+                itemTypes == null || itemTypes.isEmpty() ? null : itemTypes,
+                itemId,
+                StringUtils.defaultIfEmpty(pageLink.getTextSearch(), null),
+                updatesOnly,
+                updatesOnly ? publishedVersionIds.keySet() : NO_IDS,
+                updatesOnly ? publishedVersionIds.values() : NO_IDS,
+                toPageRequest(pageLink))
+        );
+    }
+
+    @Override
+    public List<UUID> findInstalledItemIdsByTenantId(TenantId tenantId) {
+        return repository.findInstalledItemIdsByTenantId(tenantId.getId());
+    }
+
+    @Override
+    public List<UUID> findInstalledItemIdsByTenantIdAndItemIdIn(TenantId tenantId, Collection<UUID> itemIds) {
+        return repository.findInstalledItemIdsByTenantIdAndItemIdIn(tenantId.getId(), itemIds);
+    }
+
+    @Override
+    public long countByTenantId(TenantId tenantId, String itemType) {
+        return repository.countByTenantId(tenantId.getId(), itemType);
+    }
+
+    @Override
+    public Map<UUID, Long> findInstalledItemCounts(TenantId tenantId, String itemType) {
+        List<Object[]> results = repository.findInstalledItemCounts(tenantId.getId(), itemType);
+        Map<UUID, Long> counts = new HashMap<>();
+        for (Object[] row : results) {
+            counts.put((UUID) row[0], (Long) row[1]);
+        }
+        return counts;
+    }
+
+    @Override
+    public void deleteByTenantId(TenantId tenantId) {
+        repository.deleteByTenantId(tenantId.getId());
+    }
+
+    @Override
+    public boolean deleteByTenantIdAndId(TenantId tenantId, IotHubInstalledItemId installedItemId) {
+        return repository.deleteByTenantIdAndIdIn(tenantId.getId(), Set.of(installedItemId.getId())) > 0;
+    }
+
+    private static PageRequest toPageRequest(PageLink pageLink) {
+        Sort sort;
+        SortOrder sortOrder = pageLink.getSortOrder();
+        if (sortOrder == null) {
+            sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        } else {
+            sort = Sort.by(
+                    Sort.Direction.fromString(sortOrder.getDirection().name()),
+                    sortOrder.getProperty()
+            ).and(Sort.by(Sort.Direction.ASC, "id"));
+        }
+        return PageRequest.of(pageLink.getPage(), pageLink.getPageSize(), sort);
+    }
+
+    @Override
+    protected Class<IotHubInstalledItemEntity> getEntityClass() {
+        return IotHubInstalledItemEntity.class;
+    }
+
+    @Override
+    protected JpaRepository<IotHubInstalledItemEntity, UUID> getRepository() {
+        return repository;
+    }
+
+}

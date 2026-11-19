@@ -1,18 +1,8 @@
 <!--
 
-    Copyright © 2016-2026 The Thingsboard Authors
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+    SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+    SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+    SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 
 -->
 <div [formGroup]="entityAggregationConfiguration" class="tb-form-panel no-border no-padding">
@@ -20,12 +10,14 @@
     <div class="tb-form-panel-title" tb-hint-tooltip-icon="{{ 'calculated-fields.entity-aggregation.argument-title-hint' | translate }}">
       {{ 'calculated-fields.arguments' | translate }}
     </div>
-    <div class="tb-form-hint tb-primary-fill hint-container">
-      {{ 'calculated-fields.entity-aggregation.argument-hint' | translate }}
+    <div class="tb-form-hint tb-primary-fill">
+      <mat-icon>info_outline</mat-icon>
+      <span>{{ 'calculated-fields.entity-aggregation.argument-hint' | translate }}</span>
     </div>
     <tb-entity-aggregation-arguments-table formControlName="arguments"
                                            [entityId]="entityId"
                                            [tenantId]="tenantId"
+                                           [readonly]="readonly"
                                            [isEditValue]="isEditValue"
                                            [entityName]="entityName"/>
   </div>
@@ -37,6 +29,7 @@
                                        simpleMode
                                        [testScript]="testScript"
                                        [arguments]="arguments$ | async"
+                                       [readonly]="readonly"
     ></tb-calculated-field-metrics-table>
   </div>
   <div class="tb-form-panel">
@@ -60,7 +53,6 @@
           appearance="outline"
           subscriptSizing="dynamic"
           required
-          userTimezoneByDefault
           formControlName="tz">
         </tb-timezone-select>
       </div>
@@ -99,8 +91,9 @@
                               requiredText="{{ 'calculated-fields.entity-aggregation.offset-value-required' | translate }}"
                               formControlName="offsetSec">
           </tb-time-unit-input>
-          <div class="tb-form-hint tb-primary-fill hint-container">
-            {{ hint }}
+          <div class="tb-form-hint tb-primary-fill">
+            <mat-icon>info_outline</mat-icon>
+            <span>{{ hint }}</span>
           </div>
         }
       </div>

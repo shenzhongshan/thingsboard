@@ -1,18 +1,6 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.server.cache;
 
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +92,9 @@ public abstract class VersionedRedisTbCache<K extends VersionedCacheKey, V exten
         }
         log.trace("put [{}][{}][{}]", key, value, version);
         final byte[] rawKey = getRawKey(key);
-        try (var connection = getConnection(rawKey)) {
+        // The script has one key, so in cluster mode the cluster client routes it, follows MOVED/ASK redirects and
+        // renews its slot map on connection errors.
+        try (var connection = getConnectionFactory().getConnection()) {
             doPut(rawKey, value, version, expiration, connection);
         }
     }
@@ -114,6 +104,11 @@ public abstract class VersionedRedisTbCache<K extends VersionedCacheKey, V exten
         byte[] rawVersion = StringRedisSerializer.UTF_8.serialize(String.valueOf(version));
         byte[] rawExpiration = StringRedisSerializer.UTF_8.serialize(String.valueOf(expiration.getExpirationTimeInSeconds()));
         executeScript(connection, SET_VERSIONED_VALUE_SHA, SET_VERSIONED_VALUE_LUA_SCRIPT, ReturnType.VALUE, 1, rawKey, rawValue, rawVersion, rawExpiration);
+    }
+
+    @Override
+    protected void loadScripts(RedisConnection connection) {
+        connection.scriptingCommands().scriptLoad(SET_VERSIONED_VALUE_LUA_SCRIPT);
     }
 
     @Override

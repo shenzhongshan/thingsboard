@@ -1,18 +1,6 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.rule.engine.telemetry;
 
 import com.google.gson.JsonParser;
@@ -41,6 +29,7 @@ import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.id.TenantProfileId;
 import org.thingsboard.server.common.data.kv.BasicTsKvEntry;
+import org.thingsboard.server.common.data.kv.DataType;
 import org.thingsboard.server.common.data.kv.DoubleDataEntry;
 import org.thingsboard.server.common.data.kv.KvEntry;
 import org.thingsboard.server.common.data.kv.TsKvEntry;
@@ -49,18 +38,20 @@ import org.thingsboard.server.common.data.tenant.profile.DefaultTenantProfileCon
 import org.thingsboard.server.common.data.tenant.profile.TenantProfileData;
 import org.thingsboard.server.common.msg.TbMsg;
 import org.thingsboard.server.common.msg.TbMsgMetaData;
-import org.thingsboard.server.exception.DataValidationException;
 import org.thingsboard.server.dao.service.ConstraintValidator;
+import org.thingsboard.server.exception.DataValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.ArgumentMatchers.eq;
@@ -616,6 +607,45 @@ public class TbMsgTimeseriesNodeTest extends AbstractRuleNodeUpgradeTest {
     @Override
     protected TbNode getTestNode() {
         return node;
+    }
+
+    @Test
+    public void givenTypeCastDisabledKeysInMetadata_whenOnMsg_thenListedKeysAreSavedAsStrings() throws TbNodeException {
+        var metadata = new TbMsgMetaData();
+        metadata.putTypeCastDisabledKeys(Set.of("devAddr", "firmwareVersion"));
+
+        List<TsKvEntry> entries = saveIntegrationTelemetry(metadata);
+
+        assertThat(entries).extracting(KvEntry::getKey, KvEntry::getDataType, KvEntry::getValue).containsExactlyInAnyOrder(
+                tuple("devAddr", DataType.STRING, "01020304"),
+                tuple("firmwareVersion", DataType.STRING, "1.01"),
+                tuple("temperature", DataType.DOUBLE, 22.5));
+    }
+
+    @Test
+    public void givenMetadataWithoutTypeCastDisabledKeys_whenOnMsg_thenNumericStringsAreCast() throws TbNodeException {
+        List<TsKvEntry> entries = saveIntegrationTelemetry(new TbMsgMetaData());
+
+        assertThat(entries).extracting(KvEntry::getKey, KvEntry::getDataType, KvEntry::getValue).containsExactlyInAnyOrder(
+                tuple("devAddr", DataType.LONG, 1020304L),
+                tuple("firmwareVersion", DataType.DOUBLE, 1.01),
+                tuple("temperature", DataType.DOUBLE, 22.5));
+    }
+
+    private List<TsKvEntry> saveIntegrationTelemetry(TbMsgMetaData metadata) throws TbNodeException {
+        node.init(ctxMock, new TbNodeConfiguration(JacksonUtil.valueToTree(config)));
+        TbMsg msg = TbMsg.newMsg()
+                .type(TbMsgType.POST_TELEMETRY_REQUEST)
+                .originator(DEVICE_ID)
+                .copyMetaData(metadata)
+                .data("{\"devAddr\": \"01020304\", \"firmwareVersion\": \"1.01\", \"temperature\": \"22.5\"}")
+                .build();
+
+        node.onMsg(ctxMock, msg);
+
+        ArgumentCaptor<TimeseriesSaveRequest> captor = ArgumentCaptor.forClass(TimeseriesSaveRequest.class);
+        verify(telemetryServiceMock).saveTimeseries(captor.capture());
+        return captor.getValue().getEntries();
     }
 
     private static Stream<Arguments> givenFromVersionAndConfig_whenUpgrade_thenVerifyHasChangesAndConfig() {

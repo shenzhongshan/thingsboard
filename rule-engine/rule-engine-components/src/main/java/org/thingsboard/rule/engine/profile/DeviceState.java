@@ -1,18 +1,6 @@
-/**
- * Copyright © 2016-2026 The Thingsboard Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// SPDX-FileCopyrightText: Copyright The ThingsBoard Authors
+// SPDX-FileCopyrightText: Modifications Copyright ThingsBoard, Inc.
+// SPDX-License-Identifier: Apache-2.0 AND BUSL-1.1
 package org.thingsboard.rule.engine.profile;
 
 import com.google.gson.JsonElement;
@@ -296,7 +284,7 @@ class DeviceState {
 
     private boolean processAttributes(TbContext ctx, TbMsg msg, String scope) throws ExecutionException, InterruptedException {
         boolean stateChanged = false;
-        List<AttributeKvEntry> attributes = JsonConverter.convertToAttributes(JsonParser.parseString(msg.getData()));
+        List<AttributeKvEntry> attributes = JsonConverter.attributesFromMsg(msg);
         if (!attributes.isEmpty()) {
             SnapshotUpdate update = merge(latestValues, attributes, scope);
             for (DeviceProfileAlarm alarm : deviceProfile.getAlarmSettings()) {
@@ -310,7 +298,7 @@ class DeviceState {
     }
 
     protected boolean processTelemetryRequest(TbContext ctx, TbMsg msg) throws ExecutionException, InterruptedException {
-        return processTelemetryUpdate(ctx, msg, JsonParser.parseString(msg.getData()));
+        return processTelemetryUpdate(ctx, msg, JsonConverter.sortedTelemetryFromMsg(msg, msg.getMetaDataTs()));
     }
 
     protected boolean processTelemetryUpdatedNotification(TbContext ctx, TbMsg msg) throws ExecutionException, InterruptedException {
@@ -319,12 +307,11 @@ class DeviceState {
                 .filter(JsonElement::isJsonObject)
                 .map(e -> e.getAsJsonObject().get("timeseries"))
                 .orElse(msgData);
-        return processTelemetryUpdate(ctx, msg, telemetryData);
+        return processTelemetryUpdate(ctx, msg, JsonConverter.convertToSortedTelemetry(telemetryData, msg.getMetaDataTs()));
     }
 
-    private boolean processTelemetryUpdate(TbContext ctx, TbMsg msg, JsonElement telemetryData) throws ExecutionException, InterruptedException {
+    private boolean processTelemetryUpdate(TbContext ctx, TbMsg msg, Map<Long, List<KvEntry>> tsKvMap) throws ExecutionException, InterruptedException {
         boolean stateChanged = false;
-        Map<Long, List<KvEntry>> tsKvMap = JsonConverter.convertToSortedTelemetry(telemetryData, msg.getMetaDataTs());
         // iterate over data by ts (ASC order).
         for (Map.Entry<Long, List<KvEntry>> entry : tsKvMap.entrySet()) {
             Long ts = entry.getKey();
