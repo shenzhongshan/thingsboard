@@ -48,7 +48,7 @@ interface StoredActivationClaim {
   claimToken?: string;
 }
 
-const LICENSE_PORTAL_HOST_NAME = 'license.thingsboard.io';
+const LICENSE_PORTAL_HOST_NAME = 'license.alsun.io';
 const ACTIVATION_CLAIM_STORAGE_KEY = 'activationClaim';
 const KEY_MIN_LEN = 8;
 // The GET /noauth/setup/claim endpoint is throttled server-side (at most one

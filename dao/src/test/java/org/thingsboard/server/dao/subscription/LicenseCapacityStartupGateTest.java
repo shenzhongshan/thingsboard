@@ -69,7 +69,7 @@ public class LicenseCapacityStartupGateTest {
                 .contains("use a different license key")
                 // Spelled out rather than taken from the constant: this is the address the operator has to be
                 // able to type, and a rename of the constant's value must not pass silently.
-                .contains("license.thingsboard.io")
+                .contains("license.alsun.io")
                 // The activation path shares this sentence and runs on every plan and edition.
                 .doesNotContain("Community Grant")
                 .doesNotContain("Professional Edition");
@@ -81,7 +81,7 @@ public class LicenseCapacityStartupGateTest {
                 .contains("Reduce the number of assets to 1000 or fewer")
                 .contains("buy an add-on")
                 .contains("use a different license key")
-                .contains("license.thingsboard.io");
+                .contains("license.alsun.io");
     }
 
     @Test

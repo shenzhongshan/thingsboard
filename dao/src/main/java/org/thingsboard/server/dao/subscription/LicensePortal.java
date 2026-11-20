@@ -9,7 +9,7 @@ package org.thingsboard.server.dao.subscription;
  */
 public final class LicensePortal {
 
-    public static final String URL = "https://license.thingsboard.io";
+    public static final String URL = "https://license.alsun.io";
 
     private LicensePortal() {
     }

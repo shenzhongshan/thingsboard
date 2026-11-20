@@ -89,7 +89,7 @@ public class NonProductionScaleWarningTest {
         // Pins the exact wording and the device-count interpolation, not just a substring.
         String expectedMessage = deviceCount + " devices provisioned. " + DataConstants.NON_PRODUCTION_NOTICE +
                 ". This instance has unlimited device, asset and edge quotas, so this is not a limit warning. " +
-                "If the deployment is production, obtain a free production key at https://license.thingsboard.io";
+                "If the deployment is production, obtain a free production key at https://license.alsun.io";
         assertThat(logCapture.getMessages()).contains(expectedMessage);
     }
 
@@ -109,7 +109,7 @@ public class NonProductionScaleWarningTest {
                 .singleElement(as(STRING))
                 .contains("unlimited device, asset and edge quotas")
                 .contains("not a limit warning")
-                .contains("obtain a free production key at https://license.thingsboard.io");
+                .contains("obtain a free production key at https://license.alsun.io");
     }
 
     @Test

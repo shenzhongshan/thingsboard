@@ -190,7 +190,7 @@ public class DefaultSystemSetupServiceTest {
     @Test
     public void requestClaimStoresTheTokenBeforeCallingOut() throws Exception {
         when(licensePortalClient.isPortalReachable()).thenReturn(true);
-        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.thingsboard.io");
+        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.alsun.io");
         when(licenseCtx.getClusterId()).thenReturn(CLUSTER_ID);
 
         LicenseClaimResult result = systemSetupService.requestClaim();
@@ -203,7 +203,7 @@ public class DefaultSystemSetupServiceTest {
 
         assertThat(result.getMode()).isEqualTo(LicenseClaimMode.ONLINE);
         assertThat(result.getSignUpUrl())
-                .startsWith("https://license.thingsboard.io/declareLicense?")
+                .startsWith("https://license.alsun.io/declareLicense?")
                 // The inverse of the assertion this replaces: the parameter is gone because the path now tells
                 // activation from Community Grant enrolment, and nothing should quietly put it back.
                 .doesNotContain("flow=")
@@ -215,7 +215,7 @@ public class DefaultSystemSetupServiceTest {
     @Test
     public void anUnreachablePortalHandsOutTheOfflineHint() throws Exception {
         when(licensePortalClient.isPortalReachable()).thenReturn(false);
-        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.thingsboard.io");
+        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.alsun.io");
         when(licenseCtx.getClusterId()).thenReturn(CLUSTER_ID);
 
         LicenseClaimResult result = systemSetupService.requestClaim();
@@ -275,7 +275,7 @@ public class DefaultSystemSetupServiceTest {
         // A typo in tb.license.server. Deliberately one that the URI parser actually rejects: a merely odd
         // address ("not a url") is parsed as a relative URI and yields a nonsense link rather than a failure,
         // so it would exercise nothing here.
-        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.thingsboard.io:not-a-port");
+        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.alsun.io:not-a-port");
         when(licenseCtx.getClusterId()).thenReturn(CLUSTER_ID);
         when(licensePortalClient.isPortalReachable()).thenReturn(true);
 
@@ -296,20 +296,20 @@ public class DefaultSystemSetupServiceTest {
     @Test
     public void aTrailingSlashOnTheConfiguredAddressDoesNotDoubleTheSlash() throws Exception {
         when(licensePortalClient.isPortalReachable()).thenReturn(true);
-        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.thingsboard.io/");
+        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.alsun.io/");
         when(licenseCtx.getClusterId()).thenReturn(CLUSTER_ID);
 
         // An endpoint is just as likely to be configured with a trailing slash as without one, and the two have
         // to produce the same link. Pinned because the builder is what guarantees it - path() is joined against
         // the parsed path rather than concatenated - so nothing here trims the endpoint by hand.
         assertThat(systemSetupService.requestClaim().getSignUpUrl())
-                .startsWith("https://license.thingsboard.io/declareLicense?");
+                .startsWith("https://license.alsun.io/declareLicense?");
     }
 
     @Test
     public void requestClaimMintsAFreshTokenEveryTime() throws Exception {
         when(licensePortalClient.isPortalReachable()).thenReturn(true);
-        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.thingsboard.io");
+        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.alsun.io");
         when(licenseCtx.getClusterId()).thenReturn(CLUSTER_ID);
 
         systemSetupService.requestClaim();
@@ -334,7 +334,7 @@ public class DefaultSystemSetupServiceTest {
         // unthrottled mint endpoint - which is unauthenticated - lets anyone who can reach an unlicensed
         // instance keep superseding the operator's in-flight claim so that it can never complete.
         when(licensePortalClient.isPortalReachable()).thenReturn(true);
-        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.thingsboard.io");
+        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.alsun.io");
         when(licenseCtx.getClusterId()).thenReturn(CLUSTER_ID);
 
         systemSetupService.requestClaim();
@@ -613,13 +613,13 @@ public class DefaultSystemSetupServiceTest {
         when(subscriptionService.isLicenseActivated()).thenReturn(false);
         when(tbClusterStore.getLicenseClaimToken()).thenReturn(Optional.of("claim-token"));
         when(licensePortalClient.claimFreeLicense("claim-token")).thenThrow(new LicenseException(
-                "Could not reach the ThingsBoard license server at https://license.thingsboard.io. "
+                "Could not reach the ThingsBoard license server at https://license.alsun.io. "
                         + "Check that this instance has outbound internet access, or configure a proxy.",
                 LicenseErrorCode.CONNECTION_ERROR));
 
         assertThatThrownBy(() -> systemSetupService.pollClaim(null))
                 .isInstanceOf(ThingsboardException.class)
-                .hasMessageContaining("https://license.thingsboard.io")
+                .hasMessageContaining("https://license.alsun.io")
                 .hasMessageContaining("configure a proxy. You can also enter the license key manually.");
 
         // Not terminal for the claim itself - connectivity comes back - so the token stays.
@@ -725,7 +725,7 @@ public class DefaultSystemSetupServiceTest {
         when(subscriptionService.isLicenseActivated()).thenReturn(false);
         when(tbClusterStore.getLicenseClaimToken()).thenReturn(Optional.of("claim-token"));
         when(licensePortalClient.isPortalReachable()).thenReturn(true);
-        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.thingsboard.io");
+        when(licensePortalClient.getPortalBaseUrl()).thenReturn("https://license.alsun.io");
         when(licenseCtx.getClusterId()).thenReturn(CLUSTER_ID);
         when(licensePortalClient.claimFreeLicense("claim-token")).thenAnswer(invocation -> {
             // The operator starts a fresh claim while this poll is out - the reason the poll's verdict below

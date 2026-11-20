@@ -30,7 +30,7 @@
 │ NonProductionTbLicenseClient (无 key) · TbLicenseCtx · 统计接口        │
 └───────────────┬─────────────────────────────────────────────────────┘
                 ▼
-     https://license.thingsboard.io  (License Portal / 授权服务器)
+     https://license.alsun.io  (License Portal / 授权服务器)
 ```
 
 持久化位置：
@@ -62,7 +62,7 @@
 | `LicenseCapacityStartupGate.java` | 启动完成时（`ApplicationReadyEvent`）检查：免费授权下设备/资产超限则抛 `EntityCapExceededException` 拒绝启动 |
 | `EntityCapExceededException.java` | 上述超限异常 |
 | `LicenseKeyRejections.java` | 将授权服务器错误码映射为管理员可读的拒绝原因 |
-| `LicensePortal.java` | 门户地址常量 `https://license.thingsboard.io` |
+| `LicensePortal.java` | 门户地址常量 `https://license.alsun.io` |
 | `LicenseReleaseDate.java` | 由 `Version.PROJECT_BUILD_DATE` 解析版本发布日期，传给客户端做版本覆盖校验 |
 | `LicenseStateChangedEvent.java` | 本节点 License 变更事件（触发集群广播） |
 | `LicenseStateReconciliationListener.java` | 集群收敛后通知 application 模块重置本地向导状态 |

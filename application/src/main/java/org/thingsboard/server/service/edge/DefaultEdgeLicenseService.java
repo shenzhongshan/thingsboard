@@ -44,7 +44,7 @@ public class DefaultEdgeLicenseService implements EdgeLicenseService {
 
     private RestTemplate restTemplate;
 
-    private static final String EDGE_LICENSE_SERVER_ENDPOINT = "https://license.thingsboard.io";
+    //private static final String EDGE_LICENSE_SERVER_ENDPOINT = "https://license.alsun.io";
 
     @Value("${edges.enabled:false}")
     private boolean edgesEnabled;

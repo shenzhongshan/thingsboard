@@ -56,7 +56,7 @@ public class SystemSetupControllerUnitTest {
      * fixture would document a shape production never emits and a consumer would turn into a broken link.
      */
     private static final String CLAIM_TOKEN = "fd1c0c9d6f2f4f0a9e2f1c7b3a5d8e40";
-    private static final String SIGN_UP_URL = "https://license.thingsboard.io/declareLicense"
+    private static final String SIGN_UP_URL = "https://license.alsun.io/declareLicense"
             + "?clusterId=cbb0ea36-3d5f-4b0e-9f5a-4a3d3b8f5f21&claimToken=" + CLAIM_TOKEN;
 
     @Mock

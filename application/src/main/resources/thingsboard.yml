@@ -2062,7 +2062,7 @@ edges:
     report-interval-millis: "${EDGES_STATS_REPORT_INTERVAL_MS:600000}"
 
 license:
-    secret: "${TB_LICENSE_SECRET:}" # license secret obtained from ThingsBoard License Portal (https://license.thingsboard.io)
+    secret: "${TB_LICENSE_SECRET:}" # license secret obtained from ThingsBoard License Portal (https://license.alsun.io)
     # Run without a license key, for non-production use only. Time-limited: the instance shuts down once it
     # reaches 30 days of cumulative uptime, and until then it runs watermarked - a visible non-production
     # notice - and without white-labeling. A license secret always takes precedence over this.
